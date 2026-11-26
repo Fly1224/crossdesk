@@ -188,13 +188,13 @@ jobs:
       - name: Verify Ubuntu 20.04 package dependency resolution
         run: |
           apt-get update
-          for PACKAGE in crossdesk crossdesk-virtual-desktop-xfce; do
+          for PACKAGE in onedesk onedesk-virtual-desktop-xfce; do
             apt-get install --simulate "${GITHUB_WORKSPACE}/${PACKAGE}-linux-${{ matrix.arch }}-${LEGAL_VERSION}.deb"
           done
 
       - name: Verify packaged Ubuntu 20.04 glibc baseline
         run: |
-          for PACKAGE in crossdesk crossdesk-virtual-desktop-xfce; do
+          for PACKAGE in onedesk onedesk-virtual-desktop-xfce; do
             PACKAGE_FILE="${GITHUB_WORKSPACE}/${PACKAGE}-linux-${{ matrix.arch }}-${LEGAL_VERSION}.deb"
             VERIFY_DIR="${RUNNER_TEMP}/${PACKAGE}-glibc-${{ matrix.arch }}"
             install -d "${VERIFY_DIR}"
