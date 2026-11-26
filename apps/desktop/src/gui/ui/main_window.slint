@@ -2,8 +2,6 @@ import { SurfaceSeparator, FlatSurface, UiSurface } from "ui_surface.slint";
 import { TrustedDevicesDialog, TrustedDeviceEntry, TrustStrings } from "trusted_devices.slint";
 import { ControllerEntry, ServerPanel, ServerStrings } from "server_window.slint";
 import { LanStrings } from "lan_strings.slint";
-import { SpecialSponsorStrip, SponsorDirectory } from "sponsor_strip.slint";
-import { AboutPanel, AboutPage, AboutComponent, AboutStrings, AboutNavigationRow, AboutNavigationGroup, AboutRowSeparator } from "about_panel.slint";
 import { FeedbackPanel, FeedbackStrings } from "feedback_panel.slint";
 import { UiRadius } from "ui_radius.slint";
 import { WorkbenchStyle, WorkbenchButton, WorkbenchCard, WorkbenchNotice } from "workbench_controls.slint";
@@ -45,7 +43,6 @@ export struct ReleaseNoteBlock {
 export enum UpdateCheckStatus { idle, checking, up-to-date, available, failed }
 export enum AutostartStatus { checking, enabled, disabled, unsupported, failed }
 enum CopyFeedback { idle, success, failed }
-enum SponsorPlatform { afdian, kofi, github }
 
 export global UiStrings {
     in-out property <string> window-minimize: "Minimize";
@@ -63,9 +60,6 @@ export global UiStrings {
     in-out property <string> copied: "Local ID copied to clipboard";
     in-out property <string> connect: "Connect";
     in-out property <string> settings: "Settings";
-    in-out property <string> about: "About";
-    in-out property <string> sponsorship-title: "Sponsorship";
-    in-out property <string> sponsor-via-afdian: "AFDIAN";
     in-out property <string> ok: "OK";
     in-out property <string> cancel: "Cancel";
     in-out property <string> save: "Save";
@@ -93,8 +87,6 @@ export global UiStrings {
     in-out property <string> server-host: "Server host";
     in-out property <string> server-port: "Signal port";
     in-out property <string> version: "Version";
-    in-out property <string> copyright: "© 2026 by JUNKUN DI. All rights reserved.";
-    in-out property <string> license: "Licensed under GNU GPL v3.";
     in-out property <string> signal-connected: "Signal server connected";
     in-out property <string> signal-disconnected: "Signal server disconnected";
     in-out property <string> tls-error: "Server certificate invalid or expired. Retrying automatically.";
@@ -149,49 +141,6 @@ export global UiStrings {
     in-out property <string> self-hosted-settings: "Self-hosted server settings";
     in-out property <string> access-website: "Website: ";
     in-out property <string> release-date-label: "Release Date: ";
-}
-
-// Keep sponsor labels, order, and sizing consistent across dialogs.
-component SponsorshipSection inherits VerticalLayout {
-    in property <bool> show-title: true;
-    callback open-afdian;
-    callback open-kofi;
-    callback open-github;
-    vertical-stretch: 0;
-    spacing: 10px;
-    if root.show-title: Text {
-        text: UiStrings.sponsorship-title;
-        color: WorkbenchStyle.text; font-size: 12px; font-weight: 600;
-        wrap: word-wrap;
-    }
-    HorizontalLayout {
-        spacing: 8px;
-        for platform in (GalleryStrings.language == 0
-            ? [SponsorPlatform.afdian, SponsorPlatform.kofi, SponsorPlatform.github]
-            : [SponsorPlatform.kofi, SponsorPlatform.github, SponsorPlatform.afdian]): Rectangle {
-            // Size to the label, icon, and padding, then share extra row space.
-            min-width: sponsor-label-metrics.preferred-width + 56px;
-            preferred-width: self.min-width;
-            horizontal-stretch: 1;
-            height: 32px;
-            SettingsButton {
-                width: parent.width; height: parent.height;
-                icon: platform == SponsorPlatform.afdian ? @image-url("icons/sponsors/afdian.png")
-                    : platform == SponsorPlatform.kofi ? @image-url("icons/sponsors/kofi.png")
-                    : @image-url("icons/sponsors/github.svg");
-                text: platform == SponsorPlatform.afdian ? UiStrings.sponsor-via-afdian
-                    : platform == SponsorPlatform.kofi ? "Ko-fi" : "GitHub Sponsors";
-                sponsor-label-metrics := Text {
-                    visible: false; text: parent.text; font-size: 12px;
-                }
-                clicked => {
-                    if platform == SponsorPlatform.afdian { root.open-afdian(); }
-                    else if platform == SponsorPlatform.kofi { root.open-kofi(); }
-                    else { root.open-github(); }
-                }
-            }
-        }
-    }
 }
 
 // Prompt copy in modal dialogs sits slightly low in the legacy ImGui layout.
@@ -820,9 +769,6 @@ export component MainWindow inherits Window {
     callback confirm-update;
     callback cancel-update;
     callback open-website;
-    callback open-afdian-sponsor;
-    callback open-github-sponsor;
-    callback open-kofi-sponsor;
     callback dismiss-release-welcome;
     callback check-for-updates;
     callback signal-reconnect-requested;
@@ -857,16 +803,6 @@ export component MainWindow inherits Window {
     changed self-host-settings-open => {
         if !root.self-host-settings-open { root.self-host-settings-error = ""; }
     }
-    in-out property <bool> about-open: false;
-    in-out property <AboutPage> about-page: overview;
-    private property <length> about-scroll-y: 0px;
-    in-out property <int> about-component-index: 0;
-    in property <[AboutComponent]> about-components;
-    in property <int> about-openfec-index: -1;
-    in property <string> about-revision;
-    in property <string> about-source-url;
-    in property <string> about-build-url;
-    callback open-about-link(string);
     callback open-feedback-github;
     callback export-diagnostic-logs;
     in-out property <bool> feedback-open: false;
@@ -874,17 +810,12 @@ export component MainWindow inherits Window {
     in property <string> feedback-status;
     in property <bool> feedback-succeeded: false;
     in property <string> feedback-saved-path;
-    function about-back() {
-        if root.about-page == AboutPage.document { root.about-page = AboutPage.component; }
-        else if root.about-page == AboutPage.component && root.about-component-index != 0 { root.about-page = AboutPage.components; }
-        else { root.about-page = AboutPage.overview; }
-    }
     in property <bool> release-welcome-pending: false;
     in-out property <bool> release-welcome-open: false;
     // Automatic prompts must not interrupt another dialog or menu.
     private property <bool> main-unobstructed: !root.gallery-mode
         && !root.controller-panel-open && !root.menu-open && !root.settings-open
-        && !root.self-host-settings-open && !root.about-open && !root.feedback-open
+        && !root.self-host-settings-open && !root.feedback-open
         && !root.update-dialog-visible && !root.messages-open
         && !root.update-confirm-open
         && !root.reset-password-open && !root.alias-open && !root.delete-open
@@ -951,7 +882,7 @@ export component MainWindow inherits Window {
         triggered => {
             root.dialog-focus-pending = false;
             if root.settings-open || root.autostart-guide-open
-                || root.wayland-notice-open || root.messages-open || root.about-open || root.feedback-open
+                || root.wayland-notice-open || root.messages-open || root.feedback-open
                 || (root.release-welcome-open && root.main-unobstructed) {
                 focus-sink.focus();
             }
@@ -994,19 +925,6 @@ export component MainWindow inherits Window {
             root.gallery-action("release", "");
             root.dialog-focus-pending = true;
         }
-    }
-
-    changed about-open => {
-        if root.about-open { root.dialog-focus-pending = true; }
-        else {
-            root.about-page = AboutPage.overview;
-            root.about-component-index = 0;
-            root.about-scroll-y = 0px;
-        }
-    }
-    changed about-page => {
-        // Restore dialog shortcuts after leaving the selectable license text.
-        if root.about-open { root.dialog-focus-pending = true; }
     }
 
     changed release-welcome-open => {
@@ -1235,13 +1153,6 @@ export component MainWindow inherits Window {
                 if root.wayland-notice-open {
                     if event.text == Key.Return || event.text == Key.Escape {
                         root.wayland-notice-open = false;
-                    }
-                    return accept;
-                }
-                if root.about-open && !root.update-dialog-visible {
-                    if event.text == Key.Escape {
-                        if root.about-page != AboutPage.overview { root.about-back(); }
-                        else { root.about-open = false; }
                     }
                     return accept;
                 }
@@ -2278,8 +2189,7 @@ export component MainWindow inherits Window {
         x: menu-button.x + menu-button.width - self.width;
         y: menu-button.y + menu-button.height + 6px;
         width: max(128px, max(menu-feedback-label.preferred-width, max(menu-settings-label.preferred-width,
-                   max(menu-messages-label.preferred-width + (root.announcement-unread > 0 ? menu-message-badge.width + 8px : 0px),
-                       menu-about-label.preferred-width + (root.update-available ? menu-update-badge.width + 8px : 0px)))) + 28px);
+                   menu-messages-label.preferred-width + (root.announcement-unread > 0 ? menu-message-badge.width + 8px : 0px))) + 28px);
         height: application-menu-content.preferred-height;
         background: WorkbenchStyle.surface;
         outline-color: UiSurface.edge;
@@ -2360,53 +2270,6 @@ export component MainWindow inherits Window {
                         root.messages-open = true;
                         root.refresh-announcements();
                     }
-                }
-            }
-            Rectangle {
-                height: 7px;
-                SurfaceSeparator {
-                    x: 8px; y: 3px; width: parent.width - 16px; height: 1px;
-                    outline-color: UiSurface.separator;
-                }
-            }
-            menu-about := Rectangle {
-                height: 30px;
-                background: about-touch.pressed ? WorkbenchStyle.pressed-surface
-                          : about-touch.has-hover ? WorkbenchStyle.hover-surface
-                                                  : transparent;
-                border-width: 0px;
-                border-radius: UiRadius.control;
-                animate background { duration: 120ms; }
-                accessible-role: button;
-                accessible-label: UiStrings.about + (root.update-available ? " · " + UiStrings.update-available : "");
-                accessible-action-default => { about-touch.clicked(); }
-                menu-about-label := Text {
-                    x: 8px;
-                    height: parent.height;
-                    text: UiStrings.about;
-                    color: WorkbenchStyle.text; font-size: 12px;
-                    vertical-alignment: center;
-                    accessible-role: none;
-                }
-                menu-update-badge := Rectangle {
-                    visible: root.update-available;
-                    x: parent.width - self.width - 7px;
-                    y: (parent.height - self.height) / 2;
-                    width: menu-update-label.preferred-width + 12px;
-                    height: 18px;
-                    border-radius: 9px;
-                    background: #dbeafe;
-                    accessible-role: none;
-                    menu-update-label := Text {
-                        text: UiStrings.new-version;
-                        font-size: 11px; font-weight: 400; color: #1d4ed8;
-                        horizontal-alignment: center; vertical-alignment: center;
-                        accessible-role: none;
-                    }
-                }
-                about-touch := TouchArea {
-                    mouse-cursor: pointer;
-                    clicked => { root.menu-open = false; root.about-open = true; }
                 }
             }
             Rectangle {
@@ -3326,15 +3189,6 @@ export component MainWindow inherits Window {
                         }
                     }
                 }
-                if SponsorDirectory.special.length > 0: SpecialSponsorStrip {
-                    active: root.window-active;
-                    open-link(url) => { root.open-about-link(url); }
-                }
-                SponsorshipSection {
-                    open-afdian => { root.open-afdian-sponsor(); }
-                    open-kofi => { root.open-kofi-sponsor(); }
-                    open-github => { root.open-github-sponsor(); }
-                }
                 HorizontalLayout {
                     alignment: end;
                     SettingsButton {
@@ -3342,192 +3196,6 @@ export component MainWindow inherits Window {
                         primary: true; text: MessageStrings.close;
                         clicked => { root.dismiss-release-welcome(); }
                     }
-                }
-            }
-        }
-    }
-
-    if root.about-open: Rectangle {
-        // Use the same bounds throughout the About navigation stack.
-        private property <length> dialog-width: min(480px, self.width - 40px);
-        private property <length> dialog-height: min(520px, self.height - 32px);
-        background: #15223850;
-        z: 46;
-        TouchArea { clicked => { focus-sink.focus(); } }
-        if root.about-page != AboutPage.overview: AboutPanel {
-            x: (parent.width - self.width) / 2;
-            y: (parent.height - self.height) / 2;
-            width: parent.dialog-width;
-            min-height: 0px; max-height: parent.height - 32px;
-            height: parent.dialog-height;
-            page <=> root.about-page;
-            component-index <=> root.about-component-index;
-            components: root.about-components;
-            openfec-index: root.about-openfec-index;
-            revision: root.about-revision;
-            source-url: root.about-source-url;
-            build-url: root.about-build-url;
-            back => { root.about-back(); }
-            open-link(url) => { root.open-about-link(url); }
-        }
-        if root.about-page == AboutPage.overview: SettingsDialog {
-            x: (parent.width - self.width) / 2;
-            y: (parent.height - self.height) / 2;
-            width: parent.dialog-width;
-            // The overlay excludes any custom titlebar on every platform.
-            min-height: 0px; max-height: parent.height - 32px;
-            // Keep the dialog stable as update status and release details change.
-            height: parent.dialog-height;
-            title: UiStrings.about;
-            close-label: MessageStrings.close;
-            close => { root.about-open = false; }
-
-            // Preserve section spacing and keep actions visible when longer
-            // translations need scrolling inside a small window.
-            about-scroll := ScrollView {
-                x: 24px; y: parent.content-top;
-                width: parent.width - 48px + 22px;
-                height: about-footer.y - self.y - 16px;
-                viewport-width: self.visible-width;
-                viewport-height: about-content.preferred-height;
-                // Keep the position when navigation recreates the overview.
-                viewport-y <=> root.about-scroll-y;
-                horizontal-scrollbar-policy: always-off;
-                vertical-scrollbar-policy: as-needed;
-                about-content := VerticalLayout {
-                    min-width: 0px;
-                    width: about-scroll.width; height: self.preferred-height;
-                    // Keep the expanding scrollbar outside the content.
-                    padding: 0px; padding-right: 22px; spacing: 16px;
-                    FlatSurface {
-                        height: product-info.preferred-height + 16px;
-                        background: WorkbenchStyle.surface;
-                        border-radius: UiRadius.surface;
-                        outline-color: UiSurface.edge;
-                        product-info := HorizontalLayout {
-                            x: 12px; y: 8px; width: parent.width - 24px;
-                            height: self.preferred-height; spacing: 10px;
-                            Image {
-                                width: 32px; height: 32px;
-                                source: @image-url("../../../resources/linux/crossdesk_128x128.png");
-                                image-fit: contain;
-                            }
-                            Text {
-                                text: "OneDesk"; font-size: 16px; font-weight: 600;
-                                color: WorkbenchStyle.text; vertical-alignment: center;
-                            }
-                            Text {
-                                text: UiStrings.version + " " + root.current-version;
-                                color: WorkbenchStyle.muted; font-size: 12px; wrap: word-wrap;
-                                horizontal-stretch: 1; vertical-alignment: center;
-                            }
-                        }
-                    }
-                    if root.update-available: FlatSurface {
-                        height: update-summary.preferred-height + 24px;
-                        background: WorkbenchStyle.field-surface;
-                        border-radius: UiRadius.control;
-                        outline-color: UiSurface.edge;
-                        update-summary := VerticalLayout {
-                            x: 12px; y: 12px; width: parent.width - 24px;
-                            height: self.preferred-height;
-                            padding: 0px; spacing: 10px;
-                            if root.update-available: HorizontalLayout {
-                                spacing: 12px;
-                                height: max(32px, version-link.preferred-height);
-                                Rectangle {
-                                    min-width: 0px; horizontal-stretch: 1;
-                                    accessible-role: button;
-                                    accessible-label: UiStrings.release-notes + " " + root.latest-version;
-                                    accessible-action-default => { version-touch.clicked(); }
-                                    version-link := Text {
-                                        width: parent.width; height: parent.height;
-                                        text: UiStrings.update-available + ": " + root.latest-version;
-                                        color: version-touch.has-hover ? #254cc0 : WorkbenchStyle.accent;
-                                        font-size: 13px; font-weight: 500; wrap: word-wrap;
-                                        vertical-alignment: center;
-                                    }
-                                    version-touch := TouchArea {
-                                        mouse-cursor: pointer;
-                                        clicked => { root.about-open = false; root.update-open = true; }
-                                    }
-                                }
-                                SettingsButton {
-                                    width: max(116px, release-notes-button-metrics.preferred-width + 24px);
-                                    text: UiStrings.view-release-notes;
-                                    clicked => { root.about-open = false; root.update-open = true; }
-                                    release-notes-button-metrics := Text { visible: false; text: UiStrings.view-release-notes; font-size: 12px; }
-                                }
-                            }
-                        }
-                    }
-                    if SponsorDirectory.special.length > 0: SpecialSponsorStrip {
-                        active: root.window-active;
-                        open-link(url) => { root.open-about-link(url); }
-                    }
-                    SponsorshipSection {
-                        open-afdian => { root.open-afdian-sponsor(); }
-                        open-kofi => { root.open-kofi-sponsor(); }
-                        open-github => { root.open-github-sponsor(); }
-                    }
-                    VerticalLayout {
-                        spacing: 5px;
-                        Text { text: UiStrings.copyright; color: WorkbenchStyle.muted; font-size: 11px; wrap: word-wrap; }
-                        Text { text: UiStrings.license; color: WorkbenchStyle.muted; font-size: 11px; wrap: word-wrap; }
-                    }
-                    AboutNavigationGroup {
-                        AboutNavigationRow {
-                            grouped: true;
-                            title: AboutStrings.software-license;
-                            detail: "GPL v3";
-                            clicked => { root.about-component-index = 0; root.about-page = AboutPage.component; }
-                        }
-                        AboutRowSeparator { }
-                        AboutNavigationRow {
-                            grouped: true;
-                            title: AboutStrings.components;
-                            clicked => { root.about-page = AboutPage.components; }
-                        }
-                        AboutRowSeparator { }
-                        AboutNavigationRow {
-                            grouped: true;
-                            title: AboutStrings.source;
-                            clicked => { root.about-page = AboutPage.source; }
-                        }
-                    }
-                }
-            }
-            about-footer := VerticalLayout {
-                x: 24px; y: parent.height - self.height - 24px;
-                width: parent.width - 48px; height: self.preferred-height;
-                spacing: 16px;
-                SurfaceSeparator { height: 1px; outline-color: UiSurface.separator; }
-                if root.update-status-text != "": Text {
-                    text: root.update-status-text;
-                    color: root.update-check-status == UpdateCheckStatus.failed ? #b3261e
-                        : root.update-check-status == UpdateCheckStatus.up-to-date ? WorkbenchStyle.success : WorkbenchStyle.muted;
-                    font-size: 12px; wrap: word-wrap;
-                }
-                HorizontalLayout {
-                    alignment: end; spacing: 8px;
-                    if root.update-available: WorkbenchButton {
-                        width: max(80px, about-update-button-metrics.preferred-width + 24px);
-                        height: 32px;
-                        primary: true;
-                        text-size: 12px;
-                        text: root.update-action-text;
-                        enabled: !root.update-install-busy;
-                        clicked => { root.open-download(); root.about-open = false; root.update-open = true; }
-                        about-update-button-metrics := Text { visible: false; text: root.update-action-text; font-size: 12px; }
-                    }
-                    SettingsButton {
-                        width: max(116px, check-button-metrics.preferred-width + 24px);
-                        text: UiStrings.check-for-updates;
-                        enabled: root.update-check-status != UpdateCheckStatus.checking;
-                        clicked => { root.check-for-updates(); }
-                        check-button-metrics := Text { visible: false; text: UiStrings.check-for-updates; font-size: 12px; }
-                    }
-                    SettingsButton { width: 80px; primary: true; text: UiStrings.ok; clicked => { root.about-open = false; } }
                 }
             }
         }
@@ -3636,12 +3304,6 @@ export component MainWindow inherits Window {
                             }
                         }
                     }
-                }
-
-                SponsorshipSection {
-                    open-afdian => { root.open-afdian-sponsor(); }
-                    open-kofi => { root.open-kofi-sponsor(); }
-                    open-github => { root.open-github-sponsor(); }
                 }
 
                 VerticalLayout {

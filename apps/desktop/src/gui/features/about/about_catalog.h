@@ -15,7 +15,6 @@ namespace crossdesk::about {
 
 void SetInstalledReleaseNotes(const slint::ComponentHandle<ui::MainWindow>& window,
                               const std::string& language);
-void Populate(const slint::ComponentHandle<ui::MainWindow>& window);
 
 }  // namespace crossdesk::about
 

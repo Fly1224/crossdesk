@@ -578,8 +578,6 @@ inline constexpr NamedTranslation kNamedTranslations[] = {
   {"window_restore", "还原窗口"},
   {"window_close", "关闭窗口"},
   {"save", "保存"},
-  {"copyright_notice", "© 2026 JUNKUN DI。保留所有权利。"},
-  {"license_notice", "依据 GNU GPL v3 许可发布。"},
   {"messages", "消息"},
   {"message_unread", "未读"},
   {"message_read", "已读"},
@@ -762,9 +760,6 @@ inline constexpr NamedTranslation kNamedTranslations[] = {
   {"connection_retry_after", "请在 %d 秒后重试。"},
   {"p2p_closed", "对等连接已关闭"},
   {"no_such_id", "无此 ID"},
-  {"about", "关于"},
-  {"sponsorship_title", "赞助支持"},
-  {"sponsor_via_afdian", "爱发电"},
   {"notification", "通知"},
   {"new_version", "新版本"},
   {"new_version_available", "新版本可用"},
@@ -1095,8 +1090,6 @@ inline constexpr const char* kSlintLiterals[] = {
   X(window_restore) \
   X(window_close) \
   X(save) \
-  X(copyright_notice) \
-  X(license_notice) \
   X(messages) \
   X(message_unread) \
   X(message_read) \
@@ -1279,9 +1272,6 @@ inline constexpr const char* kSlintLiterals[] = {
   X(connection_retry_after) \
   X(p2p_closed) \
   X(no_such_id) \
-  X(about) \
-  X(sponsorship_title) \
-  X(sponsor_via_afdian) \
   X(notification) \
   X(new_version) \
   X(new_version_available) \

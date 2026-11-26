@@ -94,8 +94,6 @@ inline int ApplyMainWindowStrings(
   strings.set_window_minimize(Text(localization::window_minimize[language]));
   strings.set_window_close(Text(localization::window_close[language]));
   strings.set_save(Text(localization::save[language]));
-  strings.set_copyright(Text(localization::copyright_notice[language]));
-  strings.set_license(Text(localization::license_notice[language]));
   auto& messages = window->global<ui::MessageStrings>();
   messages.set_messages(Text(localization::messages[language]));
   messages.set_unread(Text(localization::message_unread[language]));
@@ -127,9 +125,6 @@ inline int ApplyMainWindowStrings(
       Text(localization::local_id_copied_to_clipboard[language]));
   strings.set_connect(Text(localization::connect[language]));
   strings.set_settings(Text(localization::settings[language]));
-  strings.set_about(Text(localization::about[language]));
-  strings.set_sponsorship_title(Text(localization::sponsorship_title[language]));
-  strings.set_sponsor_via_afdian(Text(localization::sponsor_via_afdian[language]));
   strings.set_ok(Text(localization::ok[language]));
   strings.set_cancel(Text(localization::cancel[language]));
   strings.set_new_password(Text(localization::new_password[language]));

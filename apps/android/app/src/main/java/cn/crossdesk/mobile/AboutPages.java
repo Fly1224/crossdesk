@@ -26,7 +26,7 @@ final class AboutPages {
         LicenseCatalog loaded;try{loaded=new LicenseCatalog(activity);}catch(Exception error){loaded=null;}catalog=loaded;
     }
     void show(){
-        LinearLayout content=activity.formPage("about",L10n.tr("关于 CrossDesk"),settings);
+        LinearLayout content=activity.formPage("about",L10n.tr("关于 OneDesk"),settings);
         LinearLayout version=activity.section(content,"");value(version,L10n.tr("版本"),applicationVersion());
         updateRow=ui.row();updateRow.setPadding(ui.dp(16),0,ui.dp(16),0);updateRow.addView(activity.updateDot(),ui.size(8,8));
         updateLink=ui.action("",BLUE,()->open("https://crossdesk.cn"));updateLink.setGravity(Gravity.START|Gravity.CENTER_VERTICAL);updateLink.setPadding(ui.dp(8),ui.dp(12),0,ui.dp(12));updateRow.addView(updateLink,new LinearLayout.LayoutParams(0,-2,1));version.addView(updateRow);

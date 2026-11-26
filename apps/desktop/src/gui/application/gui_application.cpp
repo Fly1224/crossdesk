@@ -2135,7 +2135,6 @@ void GuiApplication::BindMainCallbacks(bool gallery_window) {
     const auto& latest = update_checker_->latest();
     if (updater_ && updater_->busy()) return;
     if (updater_ && latest && updater_->Available(latest->update_envelope)) {
-      main->set_about_open(false);
       main->set_update_open(true);
       main->set_update_confirm_open(true);
       return;
@@ -2161,11 +2160,6 @@ void GuiApplication::BindMainCallbacks(bool gallery_window) {
     }
 #endif
   });
-  about::Populate(ui_->Window(gallery_window));
-  main->on_open_about_link([this](slint::SharedString url) {
-    const std::string link(url);
-    if (link.starts_with("https://")) OpenUrl(link);
-  });
   main->on_open_website([this] { OpenUrl("https://onedesk.example.com"); });
   main->on_open_feedback_github([this, main] {
     if (!OpenUrl("https://github.com/Fly1224/crossdesk/issues/new/choose")) {
@@ -2175,15 +2169,6 @@ void GuiApplication::BindMainCallbacks(bool gallery_window) {
     }
   });
   main->on_export_diagnostic_logs([this] { ExportDiagnosticLogs(); });
-  main->on_open_afdian_sponsor([this] {
-    OpenUrl("https://afdian.com/a/kunkundi");
-  });
-  main->on_open_github_sponsor([this] {
-    OpenUrl("https://github.com/sponsors/kunkundi");
-  });
-  main->on_open_kofi_sponsor([this] {
-    OpenUrl("https://ko-fi.com/kunkundi");
-  });
   main->on_dismiss_release_welcome([this] {
     ui_->main->set_release_welcome_open(false);
     // Retry if the initial write failed while the dialog was on screen.
@@ -5740,7 +5725,6 @@ void GuiApplication::CloseGalleryWindow() {
   ui_->wall->set_device_group_open(false);
   ui_->wall->set_self_host_settings_open(false);
   ui_->wall->set_settings_open(false);
-  ui_->wall->set_about_open(false);
   ui_->wall->set_messages_open(false);
   ResetSettingsUi(true);
   ui_->gallery_requested_auth.clear();

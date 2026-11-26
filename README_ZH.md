@@ -28,22 +28,6 @@
   <a href="https://trendshift.io/repositories/17514?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-17514" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/trendshift/repositories/17514/monthly?language=C%2B%2B" alt="kunkundi%2Fcrossdesk | Trendshift" width="250" height="55"/></a>
 </p>
 
-## 特别赞助
-
-<table border="1">
-  <tr>
-    <td align="center" valign="middle" width="160">
-      <a href="https://crossdesk.hualong-ai.com/">
-        <img src="apps/desktop/src/gui/ui/icons/sponsors/hualongai.png" width="128" height="128" alt="HuaLongAI 华龙算力" />
-      </a>
-    </td>
-    <td valign="middle">
-      <p><strong><a href="https://crossdesk.hualong-ai.com/">HuaLongAI 华龙算力</a></strong></p>
-      <p>稳定、高效的 API 中转服务商，主营 Codex、0 注入 Kiro 与 Claude 系列模型。100% 官方源直供、不掺假、高可用，平均 SLA 高于 99.2%。计费透明，Token 级账单可逐笔核验，支持企业合同与发票。</p>
-    </td>
-  </tr>
-</table>
-
 ## 项目简介
 
 CrossDesk 让你从电脑、浏览器、手机或终端（桌面 CLI）连接远端电脑，也能通过桌面墙集中查看与操控多台设备。项目基于 [MiniRTC](https://github.com/kunkundi/minirtc)，支持自托管。

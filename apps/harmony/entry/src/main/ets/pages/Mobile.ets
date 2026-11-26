@@ -73,7 +73,7 @@ struct Mobile {
   private title(): string {
     switch (this.state.page) {
       case 'settings': return tr("设置"); case 'privacy': return tr("隐私与授权");
-      case 'about': return tr("关于 CrossDesk"); case 'licenses': return tr("开源组件"); case 'component': return this.component?.name ?? '';
+      case 'about': return tr("关于 OneDesk"); case 'licenses': return tr("开源组件"); case 'component': return this.component?.name ?? '';
       case 'source': return tr("源码与构建说明"); case 'announcements': return tr("通知公告"); case 'announcement': return tr("公告详情");
       case 'document': return this.state.documentTitle; default: return '';
     }
