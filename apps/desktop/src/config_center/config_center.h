@@ -133,7 +133,7 @@ class ConfigCenter {
   static constexpr bool kDefaultDisableReceiverPaddingProbing = true;
   bool disable_receiver_padding_probing_ = kDefaultDisableReceiverPaddingProbing;
   std::string signal_server_host_ = "";
-  std::string signal_server_host_default_ = "onedesk.example.com";
+  std::string signal_server_host_default_ = "desk.videodl.xyz";
   int signal_server_port_ = 0;
   int server_port_default_ = 9099;
   bool enable_self_hosted_ = false;
