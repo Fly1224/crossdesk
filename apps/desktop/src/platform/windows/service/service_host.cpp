@@ -1203,7 +1203,7 @@ void CrossDeskServiceHost::ClientProcessMonitorLoop() {
       continue;
     }
 
-    LOG_INFO("No OneDesk client process detected, stopping service");
+    LOG_INFO("No crossdesk client process detected, stopping service");
     RequestStop();
     return;
   }

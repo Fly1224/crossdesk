@@ -2128,7 +2128,7 @@ void GuiApplication::BindMainCallbacks(bool gallery_window) {
   main->on_open_manual_download([this] {
     const auto& latest = update_checker_->latest();
     OpenUrl(latest && !latest->download_url.empty() ? latest->download_url
-                                                   : "https://crossdesk.cn");
+                                                   : "https://onedesk.example.com");
   });
   main->on_open_download([this, main] {
 #if CROSSDESK_HAS_UPDATER
@@ -2166,9 +2166,9 @@ void GuiApplication::BindMainCallbacks(bool gallery_window) {
     const std::string link(url);
     if (link.starts_with("https://")) OpenUrl(link);
   });
-  main->on_open_website([this] { OpenUrl("https://crossdesk.cn"); });
+  main->on_open_website([this] { OpenUrl("https://onedesk.example.com"); });
   main->on_open_feedback_github([this, main] {
-    if (!OpenUrl("https://github.com/kunkundi/crossdesk/issues/new/choose")) {
+    if (!OpenUrl("https://github.com/Fly1224/crossdesk/issues/new/choose")) {
       main->set_feedback_succeeded(false);
       main->set_feedback_status(UiText(localization::Literal(
           "无法打开浏览器，请访问 GitHub 项目页面。", localization_language_index_)));

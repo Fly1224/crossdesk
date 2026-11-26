@@ -106,7 +106,7 @@ CGEventRef eventCallback(CGEventTapProxy proxy, CGEventType type,
                          CGEventRef event, void* userInfo) {
   (void)proxy;
   if (CGEventGetIntegerValueField(event, kCGEventSourceUserData) ==
-      kOneDeskInjectedEvent) {
+      kCrossDeskInjectedEvent) {
     return event;
   }
   if (!g_on_key_action) {
@@ -314,7 +314,7 @@ int PlatformKeyboardCapturer::SendKeyboardCommand(int key_code, bool is_down,
         kCGEventFlagMaskAlphaShift;
     CGEventSetFlags(event, ToCGEventFlags(injected_flags) | caps_lock);
     CGEventSetIntegerValueField(event, kCGEventSourceUserData,
-                               kOneDeskInjectedEvent);
+                               kCrossDeskInjectedEvent);
     CGEventPost(kCGHIDEventTap, event);
     CFRelease(event);
 
