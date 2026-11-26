@@ -264,7 +264,7 @@ class ClipboardApartment {
         WNDCLASSW cls{};
         cls.lpfnWndProc = WindowProc;
         cls.hInstance = GetModuleHandleW(nullptr);
-        cls.lpszClassName = L"CrossDeskFileClipboard";
+        cls.lpszClassName = L"OneDeskFileClipboard";
         RegisterClassW(&cls);
         window = CreateWindowExW(0, cls.lpszClassName, L"", 0, 0, 0, 0, 0, HWND_MESSAGE, nullptr,
                                  cls.hInstance, this);

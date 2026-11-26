@@ -107,7 +107,7 @@ void ConfigureLinuxCaCerts(httplib::Client* cli) {
 }  // namespace
 
 std::optional<VersionInfo> CheckUpdate() {
-  httplib::Client cli("https://version.crossdesk.cn");
+  httplib::Client cli("https://version.onedesk.example.com");
 
   cli.set_connection_timeout(5);
   cli.set_read_timeout(5);
@@ -129,7 +129,7 @@ std::optional<VersionInfo> CheckUpdate() {
 #if defined(__OHOS__)
           // A Linux package cannot be installed by Harmony's package manager.
           // Until the manifest has a Harmony artifact, use the release website.
-          info->download_url = "https://crossdesk.cn";
+          info->download_url = "https://onedesk.example.com";
 #elif defined(__linux__)
           std::string architecture;
 #if defined(__x86_64__)
@@ -155,7 +155,7 @@ std::optional<VersionInfo> CheckUpdate() {
           info->download_url = updater::DownloadUrl(manifest.dump(), platform, info->version);
 #endif
 #if !CROSSDESK_PORTABLE
-          if (updater::DownloadUrl(manifest.dump(), platform, info->version) != "https://crossdesk.cn")
+          if (updater::DownloadUrl(manifest.dump(), platform, info->version) != "https://onedesk.example.com")
             info->update_envelope = updater::SignedDownload(manifest.dump(), platform);
 #endif
 #endif

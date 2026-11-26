@@ -31,7 +31,7 @@ fs::path ExecutablePath() {
   return fs::canonical(buffer.data());
 }
 bool SupportedInstallation(const fs::path& application) {
-  return application == fs::path("/Applications/CrossDesk.app/Contents/MacOS/CrossDesk") &&
+  return application == fs::path("/Applications/OneDesk.app/Contents/MacOS/OneDesk") &&
          fs::is_regular_file(HelperPath(application));
 }
 int RunElevated(const fs::path& executable, const fs::path& job) {
@@ -43,11 +43,11 @@ void WaitForApplicationExit(const fs::path& application) {
   const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(45);
   do {
     const int count = proc_listallpids(nullptr, 0);
-    if (count <= 0) throw std::runtime_error("Cannot enumerate CrossDesk processes");
+    if (count <= 0) throw std::runtime_error("Cannot enumerate OneDesk processes");
     std::vector<pid_t> pids(static_cast<std::size_t>(count) + 256);
     const int length = proc_listallpids(pids.data(), static_cast<int>(pids.size() * sizeof(pid_t)));
     if (length <= 0 || length >= static_cast<int>(pids.size()))
-      throw std::runtime_error("Cannot inspect all CrossDesk processes");
+      throw std::runtime_error("Cannot inspect all OneDesk processes");
     bool running = false;
     for (int i = 0; i < length; ++i) {
       char path[PROC_PIDPATHINFO_MAXSIZE]{};
@@ -55,14 +55,14 @@ void WaitForApplicationExit(const fs::path& application) {
         if (fs::path(path) == application) running = true;
       } else {
         char name[1024]{};
-        if (proc_name(pids[i], name, sizeof(name)) > 0 && std::string(name) == "CrossDesk")
+        if (proc_name(pids[i], name, sizeof(name)) > 0 && std::string(name) == "OneDesk")
           running = true;
       }
     }
     if (!running) return;
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
   } while (std::chrono::steady_clock::now() < deadline);
-  throw std::runtime_error("CrossDesk is still running in another session");
+  throw std::runtime_error("OneDesk is still running in another session");
 }
 void InstallPackage(const fs::path& package, const fs::path&) {
   if (Run("/usr/sbin/installer", {"-pkg", package.string(), "-target", "/"}) != 0)
@@ -70,6 +70,6 @@ void InstallPackage(const fs::path& package, const fs::path&) {
 }
 std::vector<std::string> RestartArguments() { return {}; }
 void Restart(const fs::path&, const std::vector<std::string>&) {
-  Launch("/usr/bin/open", {"/Applications/CrossDesk.app"});
+  Launch("/usr/bin/open", {"/Applications/OneDesk.app"});
 }
 }  // namespace crossdesk::updater

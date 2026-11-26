@@ -17,7 +17,7 @@ rule("crossdesk.about_resources")
             try {function() result = os.iorunv("git", table.join({"-C", directory}, args)) end}
             return result and result:trim() or ""
         end
-        local repository = "https://github.com/kunkundi/crossdesk"
+        local repository = "https://github.com/Fly1224/crossdesk"
         local revision = git(root, {"rev-parse", "HEAD"})
         local source = repository .. (revision ~= "" and "/tree/" .. revision or "")
         local mini_root = path.join(root, "deps/submodules/minirtc")
@@ -39,7 +39,7 @@ rule("crossdesk.about_resources")
             aom = {"libaom", "https://aomedia.googlesource.com/aom/+/v"}
         }
         local components = {{
-            id = "crossdesk", name = "CrossDesk", version = config.get("CROSSDESK_VERSION") or "0.0.0",
+            id = "crossdesk", name = "OneDesk", version = config.get("CROSSDESK_VERSION") or "0.0.0",
             license = "GPL-3.0-only", sourceURL = source,
             documents = {{title = "GNU GPL v3", text = read("LICENSE")}}
         }, {

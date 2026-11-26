@@ -1240,7 +1240,7 @@ int GuiApplication::Run() {
   std::string activation_error;
   activation_receiver->Start(activation_error);
 #endif
-  path_manager_ = std::make_unique<PathManager>("CrossDesk");
+  path_manager_ = std::make_unique<PathManager>("OneDesk");
   if (!path_manager_) {
     return -1;
   }
@@ -1272,7 +1272,7 @@ int GuiApplication::Run() {
   StartMacPermissionMigration(false);
 #endif
 
-  LOG_INFO("CrossDesk version: {} (Slint UI)", CROSSDESK_VERSION);
+  LOG_INFO("OneDesk version: {} (Slint UI)", CROSSDESK_VERSION);
 
   strncpy(signal_server_ip_self_, config_center_->GetSignalServerHost().c_str(),
           sizeof(signal_server_ip_self_) - 1);
@@ -1645,19 +1645,19 @@ void GuiApplication::InitializeSystemTray() {
   ui_->tray = std::make_unique<WinTray>(
       std::move(show_window), std::move(hide_window),
       std::move(open_settings), std::move(exit_app), LoadSlintTrayIcon(),
-      L"CrossDesk", localization_language_index_);
+      L"OneDesk", localization_language_index_);
 #elif defined(__APPLE__)
   ui_->tray = std::make_unique<MacTray>(
       std::move(show_window), std::move(hide_window), std::move(open_settings),
-      std::move(exit_app), "CrossDesk", localization_language_index_);
+      std::move(exit_app), "OneDesk", localization_language_index_);
 #elif defined(__OHOS__)
   ui_->tray = std::make_unique<HarmonyTray>(
       std::move(show_window), std::move(hide_window), std::move(open_settings),
-      std::move(exit_app), "CrossDesk", localization_language_index_);
+      std::move(exit_app), "OneDesk", localization_language_index_);
 #elif (defined(__linux__) && !defined(__OHOS__))
   ui_->tray = std::make_unique<LinuxTray>(
       std::move(show_window), std::move(hide_window),
-      std::move(open_settings), std::move(exit_app), "CrossDesk",
+      std::move(open_settings), std::move(exit_app), "OneDesk",
       localization_language_index_);
 #endif
 #endif
@@ -2791,7 +2791,7 @@ void GuiApplication::Tick() {
         ui_->main_activation_attempts = 0;
     } else {
       if (!ui_->x11_focus_display) ui_->x11_focus_display = XOpenDisplay(nullptr);
-      if (X11ActivateWindow(ui_->x11_focus_display, "CrossDesk"))
+      if (X11ActivateWindow(ui_->x11_focus_display, "OneDesk"))
         ui_->main_activation_attempts = 0;
     }
     if (ui_->main_activation_attempts == 0) ui_->main_activation_token.clear();
@@ -3845,7 +3845,7 @@ void GuiApplication::SyncXWaylandWindowActivation() {
   const auto pid = active_window ? X11GetWindowProcessId(display, active_window) : std::nullopt;
   const auto title = active_window && (!pid || *pid == static_cast<unsigned long>(getpid()))
                          ? X11WindowTitle(display, active_window) : std::string{};
-  ui_->main->set_window_active(title == "CrossDesk");
+  ui_->main->set_window_active(title == "OneDesk");
   const bool wall_active = title == std::string(ui_->wall->get_window_title());
   ui_->wall->set_window_active(wall_active);
   if (!wall_active && !ui_->gallery_control_id.empty()) ReleaseControl();
@@ -3996,7 +3996,7 @@ void GuiApplication::SyncStreamWindow(StreamView& view) {
   auto& stream = view.window;
   const auto& props = view.session;
   const auto name = SessionDisplayName(props->remote_id_);
-  auto title = "CrossDesk — " + (name.empty() ? view.endpoint : name + " (" + view.endpoint + ")");
+  auto title = "OneDesk — " + (name.empty() ? view.endpoint : name + " (" + view.endpoint + ")");
   if (view.endpoint_window_number > 1) title += " #" + std::to_string(view.endpoint_window_number);
   stream->set_session_title(UiText(title));
 #if _WIN32

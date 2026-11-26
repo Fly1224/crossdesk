@@ -15,7 +15,7 @@ namespace crossdesk {
 namespace {
 
 HWND g_clipboard_window = nullptr;
-constexpr const char* kClipboardWindowClass = "CrossDeskClipboardMonitor";
+constexpr const char* kClipboardWindowClass = "OneDeskClipboardMonitor";
 
 LRESULT CALLBACK ClipboardWindowProc(HWND window, UINT message, WPARAM wparam,
                                      LPARAM lparam) {
@@ -141,7 +141,7 @@ bool Clipboard::SetFiles(const std::vector<std::string>& paths) {
          list.size() * sizeof(wchar_t));
   GlobalUnlock(memory);
   // OpenClipboard(NULL) cannot own a clipboard after EmptyClipboard().
-  static HWND owner = CreateWindowExW(0, L"STATIC", L"CrossDesk file clipboard",
+  static HWND owner = CreateWindowExW(0, L"STATIC", L"OneDesk file clipboard",
       0, 0, 0, 0, 0, HWND_MESSAGE, nullptr, GetModuleHandleW(nullptr), nullptr);
   if (!owner || !OpenClipboard(owner)) { GlobalFree(memory); return false; }
   const bool ok = EmptyClipboard() && SetClipboardData(CF_HDROP, memory);

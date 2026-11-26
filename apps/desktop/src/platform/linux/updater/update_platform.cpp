@@ -62,7 +62,7 @@ void WaitForApplicationExit(const fs::path& application) {
     if (!running) return;
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
   } while (std::chrono::steady_clock::now() < deadline);
-  throw std::runtime_error("CrossDesk is still running; stop other sessions or its supervisor and retry");
+  throw std::runtime_error("OneDesk is still running; stop other sessions or its supervisor and retry");
 }
 void InstallPackage(const fs::path& package, const fs::path&) {
   // No shell and no automatic dependency removal. apt owns dpkg locking and

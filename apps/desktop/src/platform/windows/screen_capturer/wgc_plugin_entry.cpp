@@ -11,7 +11,7 @@ namespace {
 void InitializePluginLogger() {
   static std::once_flag once;
   std::call_once(once, []() {
-    crossdesk::PathManager path_manager("CrossDesk");
+    crossdesk::PathManager path_manager("OneDesk");
     crossdesk::InitLogger(path_manager.GetLogPath().string(), "crossdesk-wgc");
   });
 }

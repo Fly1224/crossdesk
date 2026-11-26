@@ -176,7 +176,7 @@ void CreateCertificate(const std::filesystem::path& key_path,
   auto* name = X509_get_subject_name(cert.get());
   X509_NAME_add_entry_by_txt(
       name, "CN", MBSTRING_ASC,
-      reinterpret_cast<const unsigned char*>("CrossDesk LAN"), -1, -1, 0);
+      reinterpret_cast<const unsigned char*>("OneDesk LAN"), -1, -1, 0);
   X509_set_issuer_name(cert.get(), name);
   for (const auto& extension :
        {std::pair<int, const char*>{NID_basic_constraints, "critical,CA:FALSE"},

@@ -77,8 +77,8 @@ void EnsureConsoleForCli() {
 
 void PrintServiceCliUsage() {
   std::cout
-      << "CrossDesk service management commands\n"
-      << "  --service-install    Install the sibling crossdesk_service.exe\n"
+      << "OneDesk service management commands\n"
+      << "  --service-install    Install the sibling onedesk_service.exe\n"
       << "  --service-repair     Update the service path and restart it\n"
       << "  --service-uninstall  Remove the installed Windows service\n"
       << "  --service-start      Start the Windows service\n"
@@ -97,7 +97,7 @@ void PrintServiceCliUsage() {
 }
 
 std::filesystem::path GetSiblingServiceExecutablePath() {
-  return crossdesk::platform::SiblingExecutablePath(L"crossdesk_service.exe");
+  return crossdesk::platform::SiblingExecutablePath(L"onedesk_service.exe");
 }
 
 bool IsServiceCliCommand(const char* arg) {
@@ -169,7 +169,7 @@ int HandleServiceCliCommand(const std::string& command) {
   if (command == "--service-install" || command == "--service-repair") {
     std::filesystem::path service_path = GetSiblingServiceExecutablePath();
     if (service_path.empty()) {
-      std::cerr << "Failed to locate crossdesk_service.exe" << std::endl;
+      std::cerr << "Failed to locate onedesk_service.exe" << std::endl;
       return 1;
     }
     if (!std::filesystem::exists(service_path)) {
@@ -238,9 +238,9 @@ static crossdesk::platform::InstanceResult AcquireInstance(
   std::string error;
   const auto result = guard.TryAcquire(role, error);
   if (result == crossdesk::platform::InstanceResult::kAlreadyRunning) {
-    std::cerr << "CrossDesk is already running for this user.\n";
+    std::cerr << "OneDesk is already running for this user.\n";
   } else if (result == crossdesk::platform::InstanceResult::kError) {
-    std::cerr << "CrossDesk cannot start: " << error << '\n';
+    std::cerr << "OneDesk cannot start: " << error << '\n';
   }
   return result;
 }
@@ -254,10 +254,10 @@ static int ExitForExistingInstance(
       std::cerr << error << '\n';
 #ifdef _WIN32
       MessageBoxW(nullptr,
-                  L"CrossDesk is already running, but its window could not be "
+                  L"OneDesk is already running, but its window could not be "
                   L"activated.\n\nIt may still be starting or be running in "
                   L"another Windows session. Please check the system tray.",
-                  L"CrossDesk", MB_OK | MB_ICONINFORMATION | MB_SETFOREGROUND);
+                  L"OneDesk", MB_OK | MB_ICONINFORMATION | MB_SETFOREGROUND);
 #endif
     }
   }
@@ -266,7 +266,7 @@ static int ExitForExistingInstance(
 
 static int RunApplication(int argc, char* argv[]) {
   // The instance guards are held before any configuration or logger is opened.
-  auto path_manager = std::make_unique<crossdesk::PathManager>("CrossDesk");
+  auto path_manager = std::make_unique<crossdesk::PathManager>("OneDesk");
   crossdesk::InitLogger(path_manager->GetLogPath().string());
 
 #ifdef _WIN32
@@ -275,7 +275,7 @@ static int RunApplication(int argc, char* argv[]) {
   path_manager->CreateDirectories(path_manager->GetCachePath());
 #endif
   crossdesk::get_logger()->info(
-      "CrossDesk executable: {}",
+      "OneDesk executable: {}",
       std::filesystem::path(crossdesk::platform::CurrentExecutablePath()).u8string());
 #endif
 
@@ -300,7 +300,7 @@ static int RunApplication(int argc, char* argv[]) {
     enable_daemon = config_center.IsEnableDaemon();
 #ifdef __linux__
     if (config_center.IsEnableAutostart() &&
-        !crossdesk::platform::MigrateLegacyAutostart("CrossDesk")) {
+        !crossdesk::platform::MigrateLegacyAutostart("OneDesk")) {
       crossdesk::get_logger()->warn(
           "Could not migrate the legacy Linux autostart entry");
     }
@@ -372,7 +372,7 @@ int main(int argc, char* argv[]) {
   }
   auto& console = crossdesk::HeadlessConsole::Instance();
   if (argc == 2 && std::strcmp(argv[1], "--headless-help") == 0) {
-    crossdesk::PathManager paths("CrossDesk");
+    crossdesk::PathManager paths("OneDesk");
     CSimpleIniA config;
     config.SetUnicode(true);
     config.LoadFile((paths.GetCachePath() / "config.ini").string().c_str());
@@ -390,7 +390,7 @@ int main(int argc, char* argv[]) {
         !crossdesk::PrepareUnattendedDirectory(false))
       return 1;
     const std::string name(argv[2]);
-    if (name.rfind("Global\\CrossDeskUnattendedStop-", 0) != 0) return 1;
+    if (name.rfind("Global\\OneDeskUnattendedStop-", 0) != 0) return 1;
     const std::wstring wide_name(name.begin(), name.end());
     HANDLE stop = OpenEventW(SYNCHRONIZE, FALSE, wide_name.c_str());
     if (!stop) return 1;
@@ -412,13 +412,13 @@ int main(int argc, char* argv[]) {
   // Installer maintenance must not start the GUI or the process supervisor.
   if (argc == 2 && (std::strcmp(argv[1], "--autostart-migrate") == 0 ||
                     std::strcmp(argv[1], "--autostart-uninstall") == 0)) {
-    crossdesk::PathManager paths("CrossDesk");
+    crossdesk::PathManager paths("OneDesk");
     crossdesk::InitLogger(paths.GetLogPath().string(),
                           "crossdesk-autostart-cli");
     const bool success =
         std::strcmp(argv[1], "--autostart-migrate") == 0
             ? crossdesk::CleanupLegacyServiceAutostart()
-            : crossdesk::platform::RemoveInstalledAutostart("CrossDesk");
+            : crossdesk::platform::RemoveInstalledAutostart("OneDesk");
     return success ? 0 : 1;
   }
   if (argc == 2 &&
@@ -434,7 +434,7 @@ int main(int argc, char* argv[]) {
     if (!unattended_change &&
         AcquireInstance(cli_instance, crossdesk::platform::InstanceRole::kServiceCli) !=
             crossdesk::platform::InstanceResult::kAcquired) return 1;
-    crossdesk::PathManager paths("CrossDesk");
+    crossdesk::PathManager paths("OneDesk");
     crossdesk::InitLogger(paths.GetLogPath().string(), "crossdesk-service-cli");
     return HandleServiceCliCommand(argv[1]);
   }
@@ -467,7 +467,7 @@ int main(int argc, char* argv[]) {
 #ifdef __linux__
   const int exit_code = crossdesk::RunWithLinuxDisplay(
       argc, argv, [&] { return RunApplication(argc, argv); }, [&] {
-        crossdesk::PathManager paths("CrossDesk");
+        crossdesk::PathManager paths("OneDesk");
         if (console.Enable(paths.GetLogPath(), paths.GetCachePath() / "config.ini")) return true;
         std::cerr << "无法初始化日志或控制台，启动失败。\n";
         return false;

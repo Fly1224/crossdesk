@@ -21,7 +21,7 @@ function setup_targets()
 
     local function copy_slint_runtime(target)
         if not target:is_plat("windows", "linux") and
-            not (target:is_plat("macosx") and target:name() == "crossdesk") then
+            not (target:is_plat("macosx") and target:name() == "onedesk") then
             return
         end
 
@@ -349,8 +349,8 @@ function setup_targets()
         add_includedirs("apps/desktop/src/privacy", {public = true})
         if is_os("windows") then
             add_files("apps/desktop/src/platform/windows/privacy/*.cpp")
-            add_deps("crossdesk_privacy_cursor_helper")
-            add_deps("crossdesk_privacy_window", {inherit = false})
+            add_deps("onedesk_privacy_cursor_helper")
+            add_deps("onedesk_privacy_window", {inherit = false})
             add_includedirs("apps/desktop/src/platform/windows/input")
             add_syslinks("Wtsapi32", "Ole32", {public = true})
         elseif is_os("macosx") then
@@ -363,7 +363,7 @@ function setup_targets()
         end
 
     if is_os("windows") then
-        target("crossdesk_privacy_window")
+        target("onedesk_privacy_window")
             set_kind("shared")
             set_runtimes("MT")
             add_files("apps/desktop/src/platform/windows/privacy/band_module/main.cpp")
@@ -372,7 +372,7 @@ function setup_targets()
                 {defines = windows_resource_defines})
             add_syslinks("user32", "gdi32", "dwmapi")
 
-        target("crossdesk_privacy_cursor_helper")
+        target("onedesk_privacy_cursor_helper")
             set_kind("binary")
             add_files("apps/desktop/src/platform/windows/privacy/cursor_helper/main.cpp")
     end
@@ -617,7 +617,7 @@ function setup_targets()
         end
 
     if not is_config("CROSSDESK_PORTABLE", true) then
-        target("crossdesk_updater")
+        target("onedesk_updater")
             set_kind("binary")
             add_deps("updater_core", "single_instance")
             add_packages("nlohmann_json")
@@ -779,7 +779,7 @@ function setup_targets()
                 "apps/desktop/src/platform/windows/screen_capturer",
                 "deps/submodules/minirtc/src/api")
 
-        target("crossdesk_service")
+        target("onedesk_service")
             set_kind("binary")
             add_packages("nlohmann_json")
             add_includedirs("libs/wire/include")
@@ -793,9 +793,9 @@ function setup_targets()
             add_includedirs("apps/desktop/src/platform/windows/service",
                 "apps/desktop/src/platform/windows/screen_capturer")
 
-        target("crossdesk_session_helper")
+        target("onedesk_session_helper")
             set_kind("binary")
-              add_deps("crossdesk_privacy_cursor_helper", {inherit = false})
+              add_deps("onedesk_privacy_cursor_helper", {inherit = false})
               add_deps("wgc_plugin", {inherit = false})
             add_packages("libyuv", "nlohmann_json")
             add_deps("rd_log", "path_manager")
@@ -816,11 +816,11 @@ function setup_targets()
             add_includedirs("libs/wire/include")
     end
 
-    target("crossdesk")
+    target("onedesk")
         set_kind("binary")
         add_deps("rd_log", "desktop_common", "gui", "single_instance")
         if not is_config("CROSSDESK_PORTABLE", true) then
-            add_deps("crossdesk_updater", {inherit = false})
+            add_deps("onedesk_updater", {inherit = false})
         end
         add_files("apps/desktop/src/app/*.cpp")
         add_includedirs("apps/desktop/src", "apps/desktop/src/app", {public = true})
@@ -832,7 +832,7 @@ function setup_targets()
             add_includedirs("apps/desktop/src/platform/windows/service",
                 "apps/desktop/src/platform/windows/screen_capturer")
             add_links("Advapi32", "Wtsapi32", "Ole32", "Userenv")
-            add_deps("wgc_plugin", "crossdesk_service", "crossdesk_session_helper")
+            add_deps("wgc_plugin", "onedesk_service", "onedesk_session_helper")
             add_files(crossdesk_windows_resource, {defines = windows_resource_defines})
         elseif is_os("linux") then
             add_files("apps/desktop/src/platform/linux/headless/headless_session.cpp")

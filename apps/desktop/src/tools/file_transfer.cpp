@@ -26,7 +26,7 @@ std::filesystem::path FileReceiver::GetDefaultDesktopPath() {
 #if defined(__OHOS__)
   // Harmony has no process HOME/Desktop. Use writable application storage
   // until the user selects and authorizes a public directory in settings.
-  const auto desktop_path = platform::GetCachePath("CrossDesk") / "Received Files";
+  const auto desktop_path = platform::GetCachePath("OneDesk") / "Received Files";
 #else
 #ifdef _WIN32
   const char* home_env = std::getenv("USERPROFILE");

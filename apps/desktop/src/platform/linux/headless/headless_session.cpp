@@ -571,7 +571,7 @@ int RunHeadless(const Options& options, const std::function<int()>& run) {
   }
   XSetScreenSaver(probe, 0, 0, DefaultBlanking, DefaultExposures);
   XCloseDisplay(probe);
-  Diagnostic(spdlog::level::info) << "CrossDesk headless display " << display << " (" << options.size
+  Diagnostic(spdlog::level::info) << "OneDesk headless display " << display << " (" << options.size
             << "), XAUTHORITY=" << authority.path() << '\n';
   Child desktop;
   if (!session.empty() && !desktop.Start([&] {
@@ -587,7 +587,7 @@ int RunHeadless(const Options& options, const std::function<int()>& run) {
   while (!stop_signal) {
     if (application.Exited(&result)) return result;
     if (server.Exited() || desktop.Exited()) {
-      Diagnostic() << "Headless display or desktop session exited; stopping CrossDesk\n";
+      Diagnostic() << "Headless display or desktop session exited; stopping OneDesk\n";
       return 1;
     }
     std::this_thread::sleep_for(50ms);
@@ -640,7 +640,7 @@ int RunWithLinuxDisplay(int argc, char* argv[],
       const auto& desktop = desktops[*selected];
       SetAuthority(desktop.authority);
       ConfigureHeadlessX11(desktop.display);
-      Diagnostic(spdlog::level::info) << "CrossDesk reusing existing desktop " << desktop.display
+      Diagnostic(spdlog::level::info) << "OneDesk reusing existing desktop " << desktop.display
                 << "; Dock, panels and running applications are preserved\n";
       if (desktops.size() > 1) {
         Diagnostic(spdlog::level::info) << "Automatically selected from " << desktops.size()

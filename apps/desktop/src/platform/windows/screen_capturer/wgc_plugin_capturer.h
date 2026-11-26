@@ -38,9 +38,9 @@ class WgcPluginCapturer final : public ScreenCapturer {
     }
 
     auto create_fn = reinterpret_cast<CreateFn>(
-        GetProcAddress(module, "CrossDeskCreateWgcCapturer"));
+        GetProcAddress(module, "OneDeskCreateWgcCapturer"));
     auto destroy_fn = reinterpret_cast<DestroyFn>(
-        GetProcAddress(module, "CrossDeskDestroyWgcCapturer"));
+        GetProcAddress(module, "OneDeskDestroyWgcCapturer"));
     if (!create_fn || !destroy_fn) {
       FreeLibrary(module);
       return nullptr;
@@ -113,9 +113,9 @@ class WgcPluginCapturer final : public ScreenCapturer {
   WgcPluginCapturer(HMODULE module, ScreenCapturer* impl, DestroyFn destroy_fn)
       : module_(module), impl_(impl), destroy_fn_(destroy_fn) {
     set_cursor_fn_ = reinterpret_cast<SetCursorFn>(
-        GetProcAddress(module, "CrossDeskSetWgcCursorCapture"));
+        GetProcAddress(module, "OneDeskSetWgcCursorCapture"));
     frame_cursor_fn_ = reinterpret_cast<FrameCursorFn>(
-        GetProcAddress(module, "CrossDeskWgcFrameCapturesCursor"));
+        GetProcAddress(module, "OneDeskWgcFrameCapturesCursor"));
     // Use the legacy restart path unless both parts of the extension exist.
     if (!frame_cursor_fn_) set_cursor_fn_ = nullptr;
   }

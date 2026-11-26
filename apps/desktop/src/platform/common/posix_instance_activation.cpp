@@ -19,7 +19,7 @@
 namespace crossdesk::platform {
 namespace {
 
-constexpr std::string_view kRequest = "CrossDesk.Activate.v1";
+constexpr std::string_view kRequest = "OneDesk.Activate.v1";
 constexpr std::size_t kMaxActivationToken = 4096;
 
 #if defined(__linux__)
@@ -240,7 +240,7 @@ bool RequestInstanceActivation(std::string& error, const std::string& applicatio
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
   } while (true);
   close(fd);
-  error = "Cannot notify the existing CrossDesk window in this graphical session: " +
+  error = "Cannot notify the existing OneDesk window in this graphical session: " +
           std::string(strerror(last_error));
   return false;
 }

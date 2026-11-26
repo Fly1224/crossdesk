@@ -4,7 +4,7 @@
 
 namespace crossdesk {
 namespace {
-constexpr wchar_t kSessionWindowClass[] = L"CrossDesk.SessionEndObserver";
+constexpr wchar_t kSessionWindowClass[] = L"OneDesk.SessionEndObserver";
 }
 
 SessionEndObserver::~SessionEndObserver() {
@@ -32,7 +32,7 @@ bool SessionEndObserver::Start() {
     return ReportError("register window");
   // A hidden top-level window receives session-end broadcasts even when the
   // Slint windows are in the tray. HWND_MESSAGE does not receive them.
-  window_ = CreateWindowExW(WS_EX_TOOLWINDOW, kSessionWindowClass, L"CrossDesk",
+  window_ = CreateWindowExW(WS_EX_TOOLWINDOW, kSessionWindowClass, L"OneDesk",
       WS_OVERLAPPED, 0, 0, 0, 0, nullptr, nullptr, klass.hInstance, this);
   if (!window_) return ReportError("create window");
   return true;

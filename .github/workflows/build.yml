@@ -164,7 +164,7 @@ jobs:
           test -f /opt/crossdesk-pipewire-sdk/include/pipewire-0.3/pipewire/pipewire.h
           test -f /opt/crossdesk-pipewire-sdk/include/spa-0.2/spa/param/video/format-utils.h
 
-      - name: Build CrossDesk
+      - name: Build OneDesk
         env:
           CUDA_PATH: /usr/local/cuda
           XMAKE_GLOBALDIR: /data
@@ -306,10 +306,10 @@ jobs:
       - name: Update xmake repositories
         run: xmake repo -u
 
-      - name: Build CrossDesk
+      - name: Build OneDesk
         run: |
           xmake f --target_minver=${MACOSX_DEPLOYMENT_TARGET} --CROSSDESK_VERSION=${VERSION_NUM} --USE_CUDA=false -vyD
-          xmake b -vy crossdesk
+          xmake b -vy onedesk
 
       - name: Import Developer ID certificates and notarization credentials
         id: macos_signing
@@ -491,10 +491,10 @@ jobs:
           $nsisPluginDir = "C:\Program Files (x86)\NSIS\Plugins\x86-unicode"
           copy "${{ github.workspace }}\apps\desktop\scripts\windows\nsProcess.dll" $nsisPluginDir
 
-      - name: Build CrossDesk
+      - name: Build OneDesk
         run: |
           xmake f --CROSSDESK_VERSION=${{ env.VERSION_NUM }} --USE_CUDA=true -y
-          xmake b -vy crossdesk
+          xmake b -vy onedesk
 
       - name: Package
         shell: pwsh
@@ -506,7 +506,7 @@ jobs:
         id: upload-unsigned-windows-installer
         uses: actions/upload-artifact@v7
         with:
-          path: ${{ github.workspace }}/apps/desktop/scripts/windows/crossdesk-win-x64-${{ env.VERSION_NUM }}.exe
+          path: ${{ github.workspace }}/apps/desktop/scripts/windows/onedesk-win-x64-${{ env.VERSION_NUM }}.exe
           archive: false
           if-no-files-found: error
           retention-days: 1
@@ -530,7 +530,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && inputs.sign_windows_test
         shell: pwsh
         run: |
-          $installerName = "crossdesk-win-x64-${{ env.VERSION_NUM }}.exe"
+          $installerName = "onedesk-win-x64-${{ env.VERSION_NUM }}.exe"
           $signedInstaller = Join-Path "${{ github.workspace }}\signpath\signed-installer" $installerName
           $destination = Join-Path "${{ github.workspace }}\apps\desktop\scripts\windows" $installerName
 
@@ -547,10 +547,10 @@ jobs:
           Write-Host "Signature status: $($signature.Status)"
           Copy-Item $signedInstaller $destination -Force
 
-      - name: Build Portable CrossDesk
+      - name: Build Portable OneDesk
         run: |
           xmake f --CROSSDESK_VERSION=${{ env.VERSION_NUM }} --USE_CUDA=true --CROSSDESK_PORTABLE=true -y
-          xmake b -vy crossdesk
+          xmake b -vy onedesk
 
       - name: Package Portable
         shell: pwsh
@@ -560,11 +560,11 @@ jobs:
           New-Item -ItemType Directory -Force -Path $portableDir
 
           $portableFiles = @(
-            @("crossdesk.exe", "CrossDesk.exe"),
-            @("crossdesk_service.exe", "crossdesk_service.exe"),
-            @("crossdesk_session_helper.exe", "crossdesk_session_helper.exe"),
-            @("crossdesk_privacy_cursor_helper.exe", "crossdesk_privacy_cursor_helper.exe"),
-            @("crossdesk_privacy_window.dll", "crossdesk_privacy_window.dll"),
+            @("onedesk.exe", "OneDesk.exe"),
+            @("onedesk_service.exe", "onedesk_service.exe"),
+            @("onedesk_session_helper.exe", "onedesk_session_helper.exe"),
+            @("onedesk_privacy_cursor_helper.exe", "onedesk_privacy_cursor_helper.exe"),
+            @("onedesk_privacy_window.dll", "onedesk_privacy_window.dll"),
             @("slint_cpp.dll", "slint_cpp.dll")
           )
 
@@ -593,19 +593,19 @@ jobs:
             }
           }
 
-          Compress-Archive -Path "$portableDir\*" -DestinationPath "${{ github.workspace }}\crossdesk-win-x64-portable-${{ env.VERSION_NUM }}.zip"
+          Compress-Archive -Path "$portableDir\*" -DestinationPath "${{ github.workspace }}\onedesk-win-x64-portable-${{ env.VERSION_NUM }}.zip"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v6
         with:
-          name: crossdesk-win-x64-${{ env.VERSION_NUM }}
-          path: ${{ github.workspace }}/apps/desktop/scripts/windows/crossdesk-win-x64-${{ env.VERSION_NUM }}.exe
+          name: onedesk-win-x64-${{ env.VERSION_NUM }}
+          path: ${{ github.workspace }}/apps/desktop/scripts/windows/onedesk-win-x64-${{ env.VERSION_NUM }}.exe
 
       - name: Upload portable artifact
         uses: actions/upload-artifact@v6
         with:
-          name: crossdesk-win-x64-portable-${{ env.VERSION_NUM }}
-          path: ${{ github.workspace }}/crossdesk-win-x64-portable-${{ env.VERSION_NUM }}.zip
+          name: onedesk-win-x64-portable-${{ env.VERSION_NUM }}
+          path: ${{ github.workspace }}/onedesk-win-x64-portable-${{ env.VERSION_NUM }}.zip
 
   sign-android:
     name: Sign Android release
@@ -651,12 +651,12 @@ jobs:
           [iOS source, modification and rebuild instructions](https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_SHA}/apps/ios/README.md).
           The iOS archive also contains the exact source revision and third-party source catalog with archive checksums.
           [Android source and rebuild instructions](https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_SHA}/apps/android/README.md).
-          The Android arm64 Release APK is signed with the CrossDesk publishing key and can be installed directly.
+          The Android arm64 Release APK is signed with the OneDesk publishing key and can be installed directly.
           It includes the exact application and MiniRTC revisions, license documents and native build recipes.
 
           ## Linux packages
 
-          Choose one package for your architecture; both contain the complete CrossDesk application:
+          Choose one package for your architecture; both contain the complete OneDesk application:
           - Standard (recommended): crossdesk-linux-ARCH-VERSION.deb, for existing desktops.
           - Virtual desktop: crossdesk-virtual-desktop-xfce-linux-ARCH-VERSION.deb, which additionally installs Xfce, Xvfb and D-Bus session tools through APT.
           The packages replace each other and preserve user settings. Installation does not switch your default desktop or start a virtual session.
@@ -680,8 +680,8 @@ jobs:
           done
           cp artifacts/crossdesk-ios-arm64-unsigned-${{ needs.build-ios.outputs.version }}/* release/crossdesk-ios-arm64-unsigned-${{ needs.build-ios.outputs.version }}.zip
           cp artifacts/crossdesk-android-arm64-${{ needs.build-android.outputs.version }}/*.apk release/crossdesk-android-arm64-${{ needs.build-android.outputs.version }}.apk
-          cp artifacts/crossdesk-win-x64-${{ needs.prepare-version.outputs.version }}/* release/crossdesk-win-x64-${{ needs.prepare-version.outputs.version }}.exe
-          cp artifacts/crossdesk-win-x64-portable-${{ needs.prepare-version.outputs.version }}/* release/crossdesk-win-x64-portable-${{ needs.prepare-version.outputs.version }}.zip
+          cp artifacts/onedesk-win-x64-${{ needs.prepare-version.outputs.version }}/* release/onedesk-win-x64-${{ needs.prepare-version.outputs.version }}.exe
+          cp artifacts/onedesk-win-x64-portable-${{ needs.prepare-version.outputs.version }}/* release/onedesk-win-x64-portable-${{ needs.prepare-version.outputs.version }}.zip
 
       - name: List release files
         run: ls -lh release/

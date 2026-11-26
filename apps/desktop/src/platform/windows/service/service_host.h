@@ -18,10 +18,10 @@
 
 namespace crossdesk {
 
-inline constexpr wchar_t kCrossDeskServiceName[] = L"CrossDeskService";
-inline constexpr wchar_t kCrossDeskServiceDisplayName[] = L"CrossDesk Service";
+inline constexpr wchar_t kCrossDeskServiceName[] = L"OneDeskService";
+inline constexpr wchar_t kCrossDeskServiceDisplayName[] = L"OneDesk Service";
 inline constexpr wchar_t kCrossDeskServicePipeName[] =
-    L"\\\\.\\pipe\\CrossDeskService";
+    L"\\\\.\\pipe\\OneDeskService";
 
 class CrossDeskServiceHost {
  public:

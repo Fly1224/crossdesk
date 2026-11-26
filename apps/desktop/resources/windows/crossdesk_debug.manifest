@@ -3,10 +3,10 @@
 
   <assemblyIdentity
       version="1.0.0.0"
-      name="CrossDesk"
+      name="OneDesk"
       type="win32" />
 
-  <description>CrossDesk Application</description>
+  <description>OneDesk Application</description>
 
   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
     <security>

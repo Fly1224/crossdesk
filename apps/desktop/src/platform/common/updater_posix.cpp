@@ -16,7 +16,7 @@
 namespace crossdesk::updater {
 namespace {
 std::string LockPath(const fs::path& application) {
-  return "/tmp/CrossDesk-update-" + Sha256(fs::weakly_canonical(application).string()) + ".lock";
+  return "/tmp/OneDesk-update-" + Sha256(fs::weakly_canonical(application).string()) + ".lock";
 }
 std::vector<char*> Argv(std::vector<std::string>& args) {
   std::vector<char*> values;

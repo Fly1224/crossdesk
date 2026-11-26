@@ -33,7 +33,7 @@ class HarmonyLogSink final : public spdlog::sinks::base_sink<std::mutex> {
     const std::string text(formatted.data(), formatted.size());
     const auto level = message.level >= spdlog::level::err ? LOG_ERROR :
         message.level >= spdlog::level::warn ? LOG_WARN : LOG_INFO;
-    OH_LOG_Print(LOG_APP, level, 0, "CrossDeskDesktop", "%{public}s", text.c_str());
+    OH_LOG_Print(LOG_APP, level, 0, "OneDeskDesktop", "%{public}s", text.c_str());
   }
   void flush_() override {}
 };
@@ -110,7 +110,7 @@ std::shared_ptr<spdlog::logger> get_logger() {
     spdlog::register_logger(logger);
     logger->info("Logger initialized");
     const auto& identity = GetBuildIdentity();
-    logger->info("Build identity: CrossDesk={} ({}) MiniRTC={} ({})",
+    logger->info("Build identity: OneDesk={} ({}) MiniRTC={} ({})",
                  identity.crossdesk_revision, identity.crossdesk_state,
                  identity.minirtc_revision, identity.minirtc_state);
     SPDLOG_LOGGER_DEBUG(logger, "Log file: {}", file_sink->filename());

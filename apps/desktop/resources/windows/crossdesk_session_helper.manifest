@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-  <assemblyIdentity version="1.0.0.0" name="CrossDesk.SessionHelper" type="win32" />
-  <description>CrossDesk Session Helper</description>
+  <assemblyIdentity version="1.0.0.0" name="OneDesk.SessionHelper" type="win32" />
+  <description>OneDesk Session Helper</description>
   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
     <security>
       <requestedPrivileges>

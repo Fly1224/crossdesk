@@ -545,14 +545,14 @@ int ConfigCenter::SetAutostart(bool enabled) {
   CommitIni(true);
   return 0;
 #else
-  const bool previous = IsAutostartEnabled("CrossDesk");
+  const bool previous = IsAutostartEnabled("OneDesk");
   const auto configure = [](bool value) {
-    return value ? EnableAutostart("CrossDesk") : DisableAutostart("CrossDesk");
+    return value ? EnableAutostart("OneDesk") : DisableAutostart("OneDesk");
   };
 #if defined(__linux__) && !defined(__OHOS__)
   // Repair old deb entries even when the saved boolean is unchanged, keeping
   // desktop-managed disabled flags and custom commands intact.
-  if (enabled && previous && !platform::MigrateLegacyAutostart("CrossDesk")) {
+  if (enabled && previous && !platform::MigrateLegacyAutostart("OneDesk")) {
     LOG_ERROR("Failed to migrate Linux autostart");
     return -1;
   }
@@ -802,7 +802,7 @@ bool ConfigCenter::IsEnableAutostart() const {
 #elif defined(__linux__) && !defined(__OHOS__)
   // Uninstalling or desktop startup settings can remove the registration while
   // leaving config.ini intact. Report the actual entry, not the saved intent.
-  return IsAutostartEnabled("CrossDesk");
+  return IsAutostartEnabled("OneDesk");
 #else
   return enable_autostart_;
 #endif
