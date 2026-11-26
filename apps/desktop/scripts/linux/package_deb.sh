@@ -229,7 +229,7 @@ EOF
     # Read beside the executable by the updater; never store this in user config.
     echo "$package_name" > "$PRIVATE_DIR/package-name"
     chmod 0644 "$PRIVATE_DIR/package-name"
-    OUTPUT_FILE="$PROJECT_ROOT/${package_name}-linux-${DEBIAN_ARCH}-${APP_VERSION}.deb"
+    OUTPUT_FILE="$PROJECT_ROOT/${package_name/crossdesk/onedesk}-linux-${DEBIAN_ARCH}-${APP_VERSION}.deb"
     rm -f "$OUTPUT_FILE"
     dpkg-deb --root-owner-group --build "$DEB_DIR" "$OUTPUT_FILE"
     dpkg-deb --info "$OUTPUT_FILE" >/dev/null

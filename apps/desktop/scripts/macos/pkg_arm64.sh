@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
-APP_NAME="crossdesk"
+APP_NAME="onedesk"
 APP_NAME_UPPER="OneDesk"
 EXECUTABLE_PATH="${PROJECT_ROOT}/build/macosx/arm64/release/onedesk"
 PLATFORM="macos"
@@ -204,7 +204,7 @@ cat > build_pkg_temp/Distribution <<EOF
     <choice id="${IDENTIFIER}" title="${INSTALLER_TITLE}" visible="false">
         <pkg-ref id="${IDENTIFIER}"/>
     </choice>
-    <pkg-ref id="${IDENTIFIER}" version="${APP_VERSION}" onConclusion="none">crossdesk-component.pkg</pkg-ref>
+    <pkg-ref id="${IDENTIFIER}" version="${APP_VERSION}" onConclusion="none">${APP_NAME}-component.pkg</pkg-ref>
 </installer-gui-script>
 EOF
 

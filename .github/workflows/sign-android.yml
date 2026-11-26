@@ -74,7 +74,7 @@ jobs:
         if: github.event_name != 'workflow_dispatch' || inputs.version != ''
         uses: actions/download-artifact@v8
         with:
-          name: crossdesk-android-arm64-unsigned-${{ steps.version.outputs.version }}
+          name: onedesk-android-arm64-unsigned-${{ steps.version.outputs.version }}
           path: unsigned
 
       - name: Download unsigned APK from existing release
@@ -93,7 +93,7 @@ jobs:
               raise ValueError('Use a published stable Android release')
           PY
           gh release download "${SOURCE_TAG}" --repo "${GITHUB_REPOSITORY}" \
-            --pattern "crossdesk-android-arm64-unsigned-${APK_VERSION}.apk" --dir unsigned
+            --pattern "onedesk-android-arm64-unsigned-${APK_VERSION}.apk" --dir unsigned
 
       - name: Set up Java
         uses: actions/setup-java@v5
@@ -123,23 +123,23 @@ jobs:
           crossdesk_output="${RUNNER_TEMP}/crossdesk-android-signed"
           mkdir -p "${crossdesk_output}"
           "${crossdesk_tools}/zipalign" -P 16 -f -v 4 \
-            "unsigned/crossdesk-android-arm64-unsigned-${APK_VERSION}.apk" \
+            "unsigned/onedesk-android-arm64-unsigned-${APK_VERSION}.apk" \
             "${crossdesk_signing_dir}/aligned.apk"
           "${crossdesk_tools}/apksigner" sign \
             --ks "${crossdesk_signing_dir}/release.keystore" \
             --ks-key-alias "${ANDROID_KEY_ALIAS}" \
             --ks-pass env:ANDROID_KEYSTORE_PASSWORD --key-pass env:ANDROID_KEY_PASSWORD \
-            --out "${crossdesk_output}/crossdesk-android-arm64-${APK_VERSION}.apk" \
+            --out "${crossdesk_output}/onedesk-android-arm64-${APK_VERSION}.apk" \
             "${crossdesk_signing_dir}/aligned.apk"
           "${crossdesk_tools}/apksigner" verify --verbose --print-certs \
-            "${crossdesk_output}/crossdesk-android-arm64-${APK_VERSION}.apk"
+            "${crossdesk_output}/onedesk-android-arm64-${APK_VERSION}.apk"
           "${crossdesk_tools}/zipalign" -c -P 16 -v 4 \
-            "${crossdesk_output}/crossdesk-android-arm64-${APK_VERSION}.apk"
+            "${crossdesk_output}/onedesk-android-arm64-${APK_VERSION}.apk"
 
       - name: Upload signed Release APK
         uses: actions/upload-artifact@v6
         with:
-          name: crossdesk-android-arm64-${{ steps.version.outputs.version }}
+          name: onedesk-android-arm64-${{ steps.version.outputs.version }}
           path: ${{ runner.temp }}/crossdesk-android-signed/*.apk
           if-no-files-found: error
 

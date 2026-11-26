@@ -260,7 +260,7 @@ jobs:
           ):
               destination = output / variant
               destination.mkdir(parents=True, exist_ok=True)
-              shutil.copyfile(apk_dir / source, destination / f"crossdesk-android-arm64-{variant}-{version}.apk")
+              shutil.copyfile(apk_dir / source, destination / f"onedesk-android-arm64-{variant}-{version}.apk")
           with open(os.environ["GITHUB_OUTPUT"], "a") as stream:
               stream.write(f"version={version}\n")
           with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as stream:
@@ -272,14 +272,14 @@ jobs:
       - name: Upload unsigned Release APK
         uses: actions/upload-artifact@v6
         with:
-          name: crossdesk-android-arm64-unsigned-${{ steps.package.outputs.version }}
+          name: onedesk-android-arm64-unsigned-${{ steps.package.outputs.version }}
           path: ${{ runner.temp }}/crossdesk-android/unsigned/*.apk
           if-no-files-found: error
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v6
         with:
-          name: crossdesk-android-arm64-debug-${{ steps.package.outputs.version }}
+          name: onedesk-android-arm64-debug-${{ steps.package.outputs.version }}
           path: ${{ runner.temp }}/crossdesk-android/debug/*.apk
           if-no-files-found: error
           retention-days: 14

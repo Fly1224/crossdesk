@@ -218,7 +218,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v6
         with:
-          name: crossdesk-linux-${{ matrix.arch }}-${{ env.LEGAL_VERSION }}
+          name: onedesk-linux-${{ matrix.arch }}-${{ env.LEGAL_VERSION }}
           # A single relative directory avoids container translation of multiline
           # absolute paths and keeps both package filenames at the artifact root.
           path: linux-artifacts/
@@ -333,7 +333,7 @@ jobs:
       - name: Verify packaged app
         shell: bash
         run: |
-          PACKAGE_FILE="${GITHUB_WORKSPACE}/crossdesk-macos-${{ matrix.arch }}-${VERSION_NUM}.pkg"
+          PACKAGE_FILE="${GITHUB_WORKSPACE}/onedesk-macos-${{ matrix.arch }}-${VERSION_NUM}.pkg"
           VERIFY_DIR="$(mktemp -d "${RUNNER_TEMP}/crossdesk-macos-pkg.XXXXXX")"
           trap 'rm -rf "${VERIFY_DIR}"' EXIT
 
@@ -357,14 +357,14 @@ jobs:
           CROSSDESK_MACOS_NOTARY_S3_ACCELERATION: "false"
         run: |
           bash ./apps/desktop/scripts/macos/notarize_pkg.sh \
-            "crossdesk-macos-${{ matrix.arch }}-${VERSION_NUM}.pkg"
+            "onedesk-macos-${{ matrix.arch }}-${VERSION_NUM}.pkg"
 
       - name: Upload macOS notarization diagnostics
         if: always() && env.MACOS_SIGNING_REQUIRED == 'true'
         uses: actions/upload-artifact@v6
         with:
           name: macos-notarization-${{ matrix.arch }}-${{ env.VERSION_NUM }}
-          path: crossdesk-macos-${{ matrix.arch }}-${{ env.VERSION_NUM }}.pkg.notary*.json
+          path: onedesk-macos-${{ matrix.arch }}-${{ env.VERSION_NUM }}.pkg.notary*.json
           if-no-files-found: ignore
           retention-days: 14
 
@@ -373,21 +373,21 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: macos-pending-notarization-${{ matrix.arch }}-${{ env.VERSION_NUM }}
-          path: crossdesk-macos-${{ matrix.arch }}-${{ env.VERSION_NUM }}.pkg
+          path: onedesk-macos-${{ matrix.arch }}-${{ env.VERSION_NUM }}.pkg
           if-no-files-found: error
           retention-days: 14
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v6
         with:
-          name: crossdesk-macos-${{ matrix.arch }}-${{ env.VERSION_NUM }}
-          path: crossdesk-macos-${{ matrix.arch }}-${{ env.VERSION_NUM }}.pkg
+          name: onedesk-macos-${{ matrix.arch }}-${{ env.VERSION_NUM }}
+          path: onedesk-macos-${{ matrix.arch }}-${{ env.VERSION_NUM }}.pkg
           if-no-files-found: error
 
       - name: Move files to release dir
         run: |
           mkdir -p release
-          cp crossdesk-macos-${{ matrix.arch }}-${{ env.VERSION_NUM }}.pkg release/
+          cp onedesk-macos-${{ matrix.arch }}-${{ env.VERSION_NUM }}.pkg release/
 
       - name: Remove macOS signing credentials
         if: always() && env.MACOS_SIGNING_REQUIRED == 'true'
@@ -657,8 +657,8 @@ jobs:
           ## Linux packages
 
           Choose one package for your architecture; both contain the complete OneDesk application:
-          - Standard (recommended): crossdesk-linux-ARCH-VERSION.deb, for existing desktops.
-          - Virtual desktop: crossdesk-virtual-desktop-xfce-linux-ARCH-VERSION.deb, which additionally installs Xfce, Xvfb and D-Bus session tools through APT.
+          - Standard (recommended): onedesk-linux-ARCH-VERSION.deb, for existing desktops.
+          - Virtual desktop: onedesk-virtual-desktop-xfce-linux-ARCH-VERSION.deb, which additionally installs Xfce, Xvfb and D-Bus session tools through APT.
           The packages replace each other and preserve user settings. Installation does not switch your default desktop or start a virtual session.
           [Linux setup and switching packages](https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_SHA}/docs/HEADLESS_EN.md).
 
@@ -670,16 +670,17 @@ jobs:
       - name: Rename artifacts
         run: |
           mkdir -p release
-          cp artifacts/crossdesk-macos-x64-${{ needs.prepare-version.outputs.version }}/* release/crossdesk-macos-x64-${{ needs.prepare-version.outputs.version }}.pkg
-          cp artifacts/crossdesk-macos-arm64-${{ needs.prepare-version.outputs.version }}/* release/crossdesk-macos-arm64-${{ needs.prepare-version.outputs.version }}.pkg
+          cp artifacts/onedesk-macos-x64-${{ needs.prepare-version.outputs.version }}/* release/onedesk-macos-x64-${{ needs.prepare-version.outputs.version }}.pkg
+          cp artifacts/onedesk-macos-arm64-${{ needs.prepare-version.outputs.version }}/* release/onedesk-macos-arm64-${{ needs.prepare-version.outputs.version }}.pkg
           for ARCH in amd64 arm64; do
-            for PACKAGE in crossdesk crossdesk-virtual-desktop-xfce; do
+          for PACKAGE in onedesk onedesk-virtual-desktop-xfce; do
               FILE="${PACKAGE}-linux-${ARCH}-${{ needs.prepare-version.outputs.version }}.deb"
-              cp "artifacts/crossdesk-linux-${ARCH}-${{ needs.prepare-version.outputs.version }}/${FILE}" "release/${FILE}"
+              cp "artifacts/onedesk-linux-${ARCH}-${{ needs.prepare-version.outputs.version }}/${FILE}" "release/${FILE}"
             done
           done
-          cp artifacts/crossdesk-ios-arm64-unsigned-${{ needs.build-ios.outputs.version }}/* release/crossdesk-ios-arm64-unsigned-${{ needs.build-ios.outputs.version }}.zip
-          cp artifacts/crossdesk-android-arm64-${{ needs.build-android.outputs.version }}/*.apk release/crossdesk-android-arm64-${{ needs.build-android.outputs.version }}.apk
+          cp artifacts/onedesk-ios-arm64-unsigned-${{ needs.build-ios.outputs.version }}/* release/onedesk-ios-arm64-unsigned-${{ needs.build-ios.outputs.version }}.zip
+          cp artifacts/onedesk-android-arm64-unsigned-${{ needs.build-android.outputs.version }}/*.apk release/onedesk-android-arm64-unsigned-${{ needs.build-android.outputs.version }}.apk
+          cp artifacts/onedesk-android-arm64-debug-${{ needs.build-android.outputs.version }}/*.apk release/onedesk-android-arm64-debug-${{ needs.build-android.outputs.version }}.apk
           cp artifacts/onedesk-win-x64-${{ needs.prepare-version.outputs.version }}/* release/onedesk-win-x64-${{ needs.prepare-version.outputs.version }}.exe
           cp artifacts/onedesk-win-x64-portable-${{ needs.prepare-version.outputs.version }}/* release/onedesk-win-x64-portable-${{ needs.prepare-version.outputs.version }}.zip
 

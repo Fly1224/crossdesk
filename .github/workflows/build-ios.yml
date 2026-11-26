@@ -343,8 +343,8 @@ jobs:
         shell: bash
         run: |
           APP_PATH="${DERIVED_DATA}/Build/Products/Release-iphoneos/CrossDeskMobile.app"
-          PACKAGE_DIR="${RUNNER_TEMP}/crossdesk-ios-arm64-unsigned-${VERSION_NUM}"
-          PACKAGE_FILE="${GITHUB_WORKSPACE}/crossdesk-ios-arm64-unsigned-${VERSION_NUM}.zip"
+          PACKAGE_DIR="${RUNNER_TEMP}/onedesk-ios-arm64-unsigned-${VERSION_NUM}"
+          PACKAGE_FILE="${GITHUB_WORKSPACE}/onedesk-ios-arm64-unsigned-${VERSION_NUM}.zip"
 
           mkdir -p "${PACKAGE_DIR}"
           cp -R "${APP_PATH}" "${PACKAGE_DIR}/"
@@ -363,6 +363,6 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v6
         with:
-          name: crossdesk-ios-arm64-unsigned-${{ env.VERSION_NUM }}
+          name: onedesk-ios-arm64-unsigned-${{ env.VERSION_NUM }}
           path: ${{ env.PACKAGE_FILE }}
           if-no-files-found: error
