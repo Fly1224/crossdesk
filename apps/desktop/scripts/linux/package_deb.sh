@@ -57,7 +57,7 @@ fi
 BUILD_BINARY="$PROJECT_ROOT/build/linux/$XMAKE_ARCH/release/onedesk"
 if [[ ! -x "$BUILD_BINARY" ]]; then
     echo "Missing release binary: $BUILD_BINARY" >&2
-    echo "Build it first with: xmake f -m release -y && xmake b -vy crossdesk" >&2
+    echo "Build it first with: xmake f -m release -y && xmake b -vy onedesk" >&2
     exit 1
 fi
 
@@ -80,7 +80,7 @@ DESKTOP_DIR="$DEB_DIR/usr/share/applications"
 
 install -d "$DEBIAN_DIR" "$BIN_DIR" "$PRIVATE_DIR" "$DESKTOP_DIR"
 install -m 0755 "$BUILD_BINARY" "$PRIVATE_DIR/crossdesk-bin"
-install -m 0755 "$(dirname "$BUILD_BINARY")/crossdesk_updater" "$PRIVATE_DIR/crossdesk_updater"
+install -m 0755 "$(dirname "$BUILD_BINARY")/onedesk_updater" "$PRIVATE_DIR/crossdesk_updater"
 
 # PipeWire is deliberately optional. The Wayland capturer resolves PipeWire
 # 0.3 with dlopen() so the same package can run on Ubuntu 20.04 without the
@@ -110,7 +110,7 @@ if [[ -n "$SLINT_NEEDED" ]]; then
     SLINT_LIBRARY="$(dirname "$BUILD_BINARY")/$SLINT_NEEDED"
     if [[ ! -f "$SLINT_LIBRARY" ]]; then
         echo "Missing build-matched Slint runtime: $SLINT_LIBRARY" >&2
-        echo "Build it first with: xmake b -vy crossdesk" >&2
+        echo "Build it first with: xmake b -vy onedesk" >&2
         exit 1
     fi
     install -m 0755 "$SLINT_LIBRARY" "$PRIVATE_DIR/$SLINT_NEEDED"
