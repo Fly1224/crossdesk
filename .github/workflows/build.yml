@@ -206,7 +206,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p linux-artifacts
-          for PACKAGE in crossdesk crossdesk-virtual-desktop-xfce; do
+          for PACKAGE in onedesk onedesk-virtual-desktop-xfce; do
             FILE="${PACKAGE}-linux-${{ matrix.arch }}-${LEGAL_VERSION}.deb"
             if [[ ! -s "${FILE}" ]]; then
               echo "::error::Missing or empty Linux package: ${FILE}"
