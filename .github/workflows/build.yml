@@ -173,7 +173,7 @@ jobs:
           # meson/meson~host self-test directory races and preserving full errors.
           xmake f -v --CROSSDESK_VERSION=${LEGAL_VERSION} --USE_CUDA=true --USE_WAYLAND=true \
             --cc=gcc-10 --cxx=g++-10 --root -y
-          xmake b -vy --root crossdesk
+          xmake b -vy --root onedesk
 
       - name: Install Linux headless runtime dependencies
         run: |
