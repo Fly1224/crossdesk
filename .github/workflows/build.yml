@@ -324,7 +324,7 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: bash .github/scripts/setup_macos_signing.sh
 
-      - name: Package CrossDesk app
+      - name: Package OneDesk app
         id: macos_package
         run: |
           chmod +x ${{ matrix.package_script }}
@@ -338,9 +338,9 @@ jobs:
           trap 'rm -rf "${VERIFY_DIR}"' EXIT
 
           pkgutil --expand-full "${PACKAGE_FILE}" "${VERIFY_DIR}/expanded"
-          APP_PATH="$(find "${VERIFY_DIR}/expanded" -type d -name 'CrossDesk.app' -print -quit)"
+          APP_PATH="$(find "${VERIFY_DIR}/expanded" -type d -name 'OneDesk.app' -print -quit)"
           if [[ -z "${APP_PATH}" ]]; then
-            echo "CrossDesk.app is missing from ${PACKAGE_FILE}" >&2
+            echo "OneDesk.app is missing from ${PACKAGE_FILE}" >&2
             exit 1
           fi
 
