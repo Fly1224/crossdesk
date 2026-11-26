@@ -54,7 +54,7 @@ if [[ ! "$DEB_VERSION" =~ ^[0-9][0-9A-Za-z.+:~_-]*$ ]]; then
     exit 2
 fi
 
-BUILD_BINARY="$PROJECT_ROOT/build/linux/$XMAKE_ARCH/release/crossdesk"
+BUILD_BINARY="$PROJECT_ROOT/build/linux/$XMAKE_ARCH/release/onedesk"
 if [[ ! -x "$BUILD_BINARY" ]]; then
     echo "Missing release binary: $BUILD_BINARY" >&2
     echo "Build it first with: xmake f -m release -y && xmake b -vy crossdesk" >&2

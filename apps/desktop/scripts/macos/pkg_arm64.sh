@@ -4,8 +4,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
 APP_NAME="crossdesk"
-APP_NAME_UPPER="CrossDesk"
-EXECUTABLE_PATH="${PROJECT_ROOT}/build/macosx/arm64/release/crossdesk"
+APP_NAME_UPPER="OneDesk"
+EXECUTABLE_PATH="${PROJECT_ROOT}/build/macosx/arm64/release/onedesk"
 PLATFORM="macos"
 ARCH="arm64"
 BINARY_ARCH="arm64"
@@ -76,7 +76,7 @@ mkdir -p build_pkg_temp
 mkdir -p "${MACOS_DIR}" "${RESOURCES_DIR}"
 
 cp "${EXECUTABLE_PATH}" "${MACOS_DIR}/${APP_NAME_UPPER}"
-cp "$(dirname "${EXECUTABLE_PATH}")/crossdesk_updater" "${MACOS_DIR}/crossdesk_updater"
+cp "$(dirname "${EXECUTABLE_PATH}")/onedesk_updater" "${MACOS_DIR}/crossdesk_updater"
 chmod +x "${MACOS_DIR}/crossdesk_updater"
 chmod +x "${MACOS_DIR}/${APP_NAME_UPPER}"
 
@@ -167,10 +167,10 @@ cat > build_pkg_resources/welcome.html <<EOF
 </head>
 <body>
     <h1>欢迎安装 ${INSTALLER_TITLE}</h1>
-    <p>CrossDesk 需要 macOS ${MACOS_MIN_VERSION} 或更高版本，将安装到“应用程序”文件夹。</p>
-    <p>首次启动时，CrossDesk 会引导你在系统设置中授予必要权限，包括辅助功能、录屏与系统录音等。</p>
+    <p>OneDesk 需要 macOS ${MACOS_MIN_VERSION} 或更高版本，将安装到“应用程序”文件夹。</p>
+    <p>首次启动时，OneDesk 会引导你在系统设置中授予必要权限，包括辅助功能、录屏与系统录音等。</p>
     <p>正式签名版本正常升级时会保留已有权限。从未签名或 ad-hoc 旧版升级后，请退出旧版并启动新版。新版会迁移当前用户的录屏与辅助功能授权，并引导你重新授权。遇到异常可在“设置 → 系统权限”中重试或稍后处理。</p>
-    <p>安装完成后，请从“应用程序”文件夹启动 CrossDesk。</p>
+    <p>安装完成后，请从“应用程序”文件夹启动 OneDesk。</p>
 </body>
 </html>
 EOF
