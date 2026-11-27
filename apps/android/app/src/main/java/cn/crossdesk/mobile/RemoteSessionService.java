@@ -77,7 +77,7 @@ public final class RemoteSessionService extends Service {
                 new Intent(this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP),
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         Intent stopIntent = new Intent(this, RemoteSessionService.class).setAction(STOP)
-                .setData(android.net.Uri.parse("crossdesk-session:" + owned.token)).putExtra("session", owned.token);
+                .setData(android.net.Uri.parse("onedesk-session:" + owned.token)).putExtra("session", owned.token);
         PendingIntent stop = PendingIntent.getService(this, 1, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         return new Notification.Builder(this, CHANNEL).setSmallIcon(R.drawable.ic_remote_session)
                 .setContentTitle(L10n.tr("CrossDesk 远程连接"))

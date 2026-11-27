@@ -14,9 +14,9 @@ XMAKE_ARCH="$2"
 INPUT_VERSION="$3"
 EXTRA_RECOMMENDATION="${4:-}"
 
-PKG_NAME="crossdesk"
-VIRTUAL_PACKAGE_NAME="crossdesk-virtual-desktop-xfce"
-APP_NAME="CrossDesk"
+PKG_NAME="onedesk"
+VIRTUAL_PACKAGE_NAME="onedesk-virtual-desktop-xfce"
+APP_NAME="OneDesk"
 MAINTAINER="Junkun Di <junkun.di@hotmail.com>"
 DESCRIPTION="A simple cross-platform remote desktop client."
 ALSA_RUNTIME_DEP="libasound2 | libasound2t64"
@@ -68,7 +68,7 @@ for command_name in readelf ldd dpkg-deb strip; do
     fi
 done
 
-WORK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/crossdesk-deb.XXXXXX")"
+WORK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/onedesk-deb.XXXXXX")"
 trap 'rm -rf "$WORK_DIR"' EXIT
 
 DEB_DIR="$WORK_DIR/${PKG_NAME}-${DEB_VERSION}"
@@ -79,8 +79,8 @@ ICON_BASE_DIR="$DEB_DIR/usr/share/icons/hicolor"
 DESKTOP_DIR="$DEB_DIR/usr/share/applications"
 
 install -d "$DEBIAN_DIR" "$BIN_DIR" "$PRIVATE_DIR" "$DESKTOP_DIR"
-install -m 0755 "$BUILD_BINARY" "$PRIVATE_DIR/crossdesk-bin"
-install -m 0755 "$(dirname "$BUILD_BINARY")/onedesk_updater" "$PRIVATE_DIR/crossdesk_updater"
+install -m 0755 "$BUILD_BINARY" "$PRIVATE_DIR/onedesk-bin"
+install -m 0755 "$(dirname "$BUILD_BINARY")/onedesk_updater" "$PRIVATE_DIR/onedesk_updater"
 
 # PipeWire is deliberately optional. The Wayland capturer resolves PipeWire
 # 0.3 with dlopen() so the same package can run on Ubuntu 20.04 without the
@@ -122,7 +122,7 @@ fi
 # Check the staged files with only their private runtime directory available.
 # ldd -r can exit successfully even when it reports unresolved symbols, so its
 # diagnostics must also be checked. This does not start the GUI or updater.
-for executable in crossdesk-bin crossdesk_updater; do
+for executable in onedesk-bin onedesk_updater; do
     dependency_report="$WORK_DIR/$executable.ldd"
     if ! env -u LD_PRELOAD -u LD_AUDIT LD_LIBRARY_PATH="$PRIVATE_DIR" \
         ldd -r "$PRIVATE_DIR/$executable" > "$dependency_report" 2>&1 || \
@@ -133,22 +133,22 @@ for executable in crossdesk-bin crossdesk_updater; do
     fi
 done
 if [[ -n "$SLINT_NEEDED" ]]; then
-    if ! grep -Fq "$SLINT_NEEDED => $PRIVATE_DIR/$SLINT_NEEDED (" "$WORK_DIR/crossdesk-bin.ldd"; then
+    if ! grep -Fq "$SLINT_NEEDED => $PRIVATE_DIR/$SLINT_NEEDED (" "$WORK_DIR/onedesk-bin.ldd"; then
         echo "Packaged executable does not load its private Slint runtime" >&2
-        cat "$WORK_DIR/crossdesk-bin.ldd" >&2
+        cat "$WORK_DIR/onedesk-bin.ldd" >&2
         exit 1
     fi
 fi
 
 cat > "$BIN_DIR/$PKG_NAME" <<'EOF'
 #!/bin/sh
-private_lib_dir="/usr/lib/crossdesk"
+private_lib_dir="/usr/lib/onedesk"
 if [ -n "${LD_LIBRARY_PATH:-}" ]; then
     export LD_LIBRARY_PATH="$private_lib_dir:$LD_LIBRARY_PATH"
 else
     export LD_LIBRARY_PATH="$private_lib_dir"
 fi
-exec /usr/lib/crossdesk/crossdesk-bin "$@"
+exec /usr/lib/onedesk/onedesk-bin "$@"
 EOF
 chmod 0755 "$BIN_DIR/$PKG_NAME"
 ln -s "$PKG_NAME" "$BIN_DIR/$APP_NAME"
@@ -180,12 +180,12 @@ EOF
 # Give shells a desktop entry for the remote window's separate app id. Without
 # it, some shells fall back to the process's main launcher and merge the groups;
 # Wayland also uses this entry to resolve the icon. Hide it from app menus: a
-# fresh launch can open CrossDesk, but cannot recreate a live remote session.
+# fresh launch can open OneDesk, but cannot recreate a live remote session.
 cat > "$DESKTOP_DIR/$PKG_NAME-remote-control.desktop" <<EOF
 [Desktop Entry]
 Version=1.0
 Name=$APP_NAME Remote Control
-Comment=Active CrossDesk remote control sessions
+Comment=Active OneDesk remote control sessions
 Exec=/usr/bin/$PKG_NAME
 Icon=$PKG_NAME
 StartupWMClass=$PKG_NAME-remote-control
@@ -202,7 +202,7 @@ for package_name in "$PKG_NAME" "$VIRTUAL_PACKAGE_NAME"; do
     other_package="$VIRTUAL_PACKAGE_NAME"
     if [[ "$package_name" == "$VIRTUAL_PACKAGE_NAME" ]]; then
         extra_depends=", $HEADLESS_RUNTIME_DEPS"
-        description="CrossDesk with Xfce and Xvfb for independent virtual desktops."
+        description="OneDesk with Xfce and Xvfb for independent virtual desktops."
         other_package="$PKG_NAME"
     fi
     cat > "$DEBIAN_DIR/control" <<EOF
@@ -229,7 +229,7 @@ EOF
     # Read beside the executable by the updater; never store this in user config.
     echo "$package_name" > "$PRIVATE_DIR/package-name"
     chmod 0644 "$PRIVATE_DIR/package-name"
-    OUTPUT_FILE="$PROJECT_ROOT/${package_name/crossdesk/onedesk}-linux-${DEBIAN_ARCH}-${APP_VERSION}.deb"
+    OUTPUT_FILE="$PROJECT_ROOT/${package_name}-linux-${DEBIAN_ARCH}-${APP_VERSION}.deb"
     rm -f "$OUTPUT_FILE"
     dpkg-deb --root-owner-group --build "$DEB_DIR" "$OUTPUT_FILE"
     dpkg-deb --info "$OUTPUT_FILE" >/dev/null

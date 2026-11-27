@@ -12,7 +12,7 @@ import subprocess
 import tempfile
 
 
-DOWNLOAD_BASE = "https://downloads.crossdesk.cn/"
+DOWNLOAD_BASE = "https://downloads.onedesk.example.com/"
 ARTIFACTS = {
     "windows-x64": ("win-x64", "exe"),
     "windows-x64-portable": ("win-x64-portable", "zip"),
@@ -103,7 +103,7 @@ def artifact_downloads(directory):
         if not path.is_file():
             continue
         for key, (prefix, extension) in ARTIFACTS.items():
-            match = re.fullmatch(rf"crossdesk-{prefix}-v([0-9][0-9.\-]*)\.{extension}", path.name)
+            match = re.fullmatch(rf"onedesk-{prefix}-v([0-9][0-9.\-]*)\.{extension}", path.name)
             if not match:
                 continue
             metadata = version_info(match[1])

@@ -1459,9 +1459,9 @@ void GuiApplication::InitializeUi() {
     wayland_display_guard.emplace("WAYLAND_DISPLAY");
     wayland_socket_guard.emplace("WAYLAND_SOCKET");
   }
-  // Match crossdesk.desktop even when the Debian launcher runs crossdesk-bin.
+  // Match onedesk.desktop even when the Debian launcher runs onedesk-bin.
   // Set this before creating any windows so X11 and Wayland share the same id.
-  slint::set_xdg_app_id("crossdesk");
+  slint::set_xdg_app_id("onedesk");
 #endif
   ui_ = std::make_unique<SlintUi>();
   for (const auto& window : {ui_->main, ui_->wall})
@@ -3956,7 +3956,7 @@ void GuiApplication::InitializeStreamWindow(StreamView& view) {
     view.endpoint = FormatPeerId(view.session->remote_id_.c_str());
   }
 #if defined(__linux__) && !defined(__OHOS__)
-  stream->window().set_xdg_app_id("crossdesk-remote-control");
+  stream->window().set_xdg_app_id("onedesk-remote-control");
   stream->set_custom_titlebar(use_xwayland_gui_);
 #endif
   stream->set_control_hand_cursor_supported(SupportsControlHandCursor(ui_->main->window()));

@@ -52,12 +52,12 @@ bool OwnedJobDirectory(const fs::path& job) {
 fs::path PrivateDirectory() {
   // Ignore TMPDIR in privileged processes. mkdtemp creates a private 0700
   // directory; installation only consumes a verified copy inside this directory.
-  std::string pattern = "/tmp/crossdesk-update-XXXXXX";
+  std::string pattern = "/tmp/onedesk-update-XXXXXX";
   if (!mkdtemp(pattern.data())) throw std::runtime_error("Cannot create private update directory");
   return fs::path(pattern);
 }
 fs::path HelperPath(const fs::path& application) {
-  return application.parent_path() / "crossdesk_updater";
+  return application.parent_path() / "onedesk_updater";
 }
 std::shared_ptr<void> PinHelper(const fs::path&) { return {}; }
 void RestoreServices() {}

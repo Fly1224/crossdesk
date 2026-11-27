@@ -54,12 +54,12 @@ std::string ExpectedFilename(const std::string& platform, const std::string& ver
   if (platform == "windows-x64-portable")
     return "onedesk-win-x64-portable-v" + version + ".zip";
   if (platform == "macos-x64" || platform == "macos-arm64")
-    return "crossdesk-" + platform + "-v" + version + ".pkg";
+    return "onedesk-" + platform + "-v" + version + ".pkg";
   for (const std::string arch : {"amd64", "arm64"}) {
     if (platform == "linux-" + arch)
-      return "crossdesk-linux-" + arch + "-v" + version + ".deb";
+      return "onedesk-linux-" + arch + "-v" + version + ".deb";
     if (platform == "linux-" + arch + "-virtual-desktop-xfce")
-      return "crossdesk-virtual-desktop-xfce-linux-" + arch + "-v" + version + ".deb";
+      return "onedesk-virtual-desktop-xfce-linux-" + arch + "-v" + version + ".deb";
   }
   throw std::runtime_error("Unsupported update platform");
 }
@@ -129,8 +129,8 @@ std::string PlatformKey(const fs::path& executable, bool portable) {
   std::ifstream marker(executable.parent_path() / "package-name");
   std::string package;
   if (!std::getline(marker, package)) return {};
-  if (package == "crossdesk-virtual-desktop-xfce") key += "-virtual-desktop-xfce";
-  else if (package != "crossdesk") return {};
+  if (package == "onedesk-virtual-desktop-xfce") key += "-virtual-desktop-xfce";
+  else if (package != "onedesk") return {};
   return key;
 #else
   (void)executable; (void)portable;

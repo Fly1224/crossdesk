@@ -9,7 +9,7 @@ EXECUTABLE_PATH="${PROJECT_ROOT}/build/macosx/x86_64/release/onedesk"
 PLATFORM="macos"
 ARCH="x64"
 BINARY_ARCH="x86_64"
-IDENTIFIER="cn.crossdesk.app"
+IDENTIFIER="cn.onedesk.app"
 ICON_PATH="${PROJECT_ROOT}/apps/desktop/resources/macos/crossdesk.icns"
 MACOS_MIN_VERSION="14.0"
 
@@ -76,8 +76,8 @@ mkdir -p build_pkg_temp
 mkdir -p "${MACOS_DIR}" "${RESOURCES_DIR}"
 
 cp "${EXECUTABLE_PATH}" "${MACOS_DIR}/${APP_NAME_UPPER}"
-cp "$(dirname "${EXECUTABLE_PATH}")/onedesk_updater" "${MACOS_DIR}/crossdesk_updater"
-chmod +x "${MACOS_DIR}/crossdesk_updater"
+cp "$(dirname "${EXECUTABLE_PATH}")/onedesk_updater" "${MACOS_DIR}/onedesk_updater"
+chmod +x "${MACOS_DIR}/onedesk_updater"
 chmod +x "${MACOS_DIR}/${APP_NAME_UPPER}"
 
 if [ -f "${ICON_PATH}" ]; then

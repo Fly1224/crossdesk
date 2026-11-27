@@ -71,7 +71,7 @@ verify_dependencies() {
 }
 
 verify_dependencies "$APP_EXECUTABLE"
-UPDATER="$APP_BUNDLE/Contents/MacOS/crossdesk_updater"
+UPDATER="$APP_BUNDLE/Contents/MacOS/onedesk_updater"
 if [[ ! -x "$UPDATER" ]] || ! lipo "$UPDATER" -verify_arch "$EXPECTED_ARCH" >/dev/null 2>&1; then
     echo "Missing updater or incorrect updater architecture" >&2
     exit 1

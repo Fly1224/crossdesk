@@ -15,7 +15,7 @@ std::string LinuxUpdateDownloadUrl(const nlohmann::json& manifest,
     return fallback;
   }
 
-  std::string package_name = "crossdesk";
+  std::string package_name = "onedesk";
   const auto marker = executable_dir / "package-name";
   std::error_code error;
   const bool has_marker = std::filesystem::exists(marker, error);
@@ -25,9 +25,9 @@ std::string LinuxUpdateDownloadUrl(const nlohmann::json& manifest,
     if (!std::getline(file, package_name)) return fallback;
   }
   std::string key = "linux-" + architecture;
-  if (package_name == "crossdesk-virtual-desktop-xfce") {
+  if (package_name == "onedesk-virtual-desktop-xfce") {
     key += "-virtual-desktop-xfce";
-  } else if (package_name != "crossdesk") {
+  } else if (package_name != "onedesk") {
     return fallback;
   }
 

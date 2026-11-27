@@ -33,7 +33,7 @@ std::vector<std::string> HeadlessArguments(const std::vector<std::string>& argum
 
 fs::path ExecutablePath() { return fs::read_symlink("/proc/self/exe"); }
 bool SupportedInstallation(const fs::path& application) {
-  return application == fs::path("/usr/lib/crossdesk/crossdesk-bin") &&
+  return application == fs::path("/usr/lib/onedesk/onedesk-bin") &&
          !PlatformKey(application).empty() && fs::is_regular_file(HelperPath(application)) &&
          access("/usr/bin/pkexec", X_OK) == 0 && access("/usr/bin/apt-get", X_OK) == 0;
 }
@@ -56,7 +56,7 @@ void WaitForApplicationExit(const fs::path& application) {
         std::ifstream comm(entry.path() / "comm");
         std::string process_name;
         std::getline(comm, process_name);
-        if (process_name == "crossdesk-bin") running = true;
+        if (process_name == "onedesk-bin") running = true;
       }
     }
     if (!running) return;
@@ -83,6 +83,6 @@ std::vector<std::string> RestartArguments() {
   return HeadlessArguments(arguments);
 }
 void Restart(const fs::path&, const std::vector<std::string>& arguments) {
-  Launch("/usr/bin/crossdesk", HeadlessArguments(arguments));
+  Launch("/usr/bin/onedesk", HeadlessArguments(arguments));
 }
 }  // namespace crossdesk::updater

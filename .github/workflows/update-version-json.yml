@@ -49,7 +49,7 @@ jobs:
               raise ValueError('Only published stable releases update version.json')
           PY
           gh release download "${RELEASE_TAG}" --repo "${GITHUB_REPOSITORY}" \
-            --pattern 'crossdesk-*' --dir release
+            --pattern 'onedesk-*' --dir release
 
       - name: Upload release assets to download server
         uses: burnett01/rsync-deployments@5.2

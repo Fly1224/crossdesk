@@ -13,8 +13,8 @@
 namespace crossdesk::platform {
 namespace {
 
-constexpr const char* kInstalledExecutable = "/usr/lib/crossdesk/crossdesk-bin";
-constexpr const char* kInstalledLauncher = "/usr/bin/crossdesk";
+constexpr const char* kInstalledExecutable = "/usr/lib/onedesk/onedesk-bin";
+constexpr const char* kInstalledLauncher = "/usr/bin/onedesk";
 
 std::filesystem::path AutostartPath(const std::string& app_name) {
   const char* config = std::getenv("XDG_CONFIG_HOME");

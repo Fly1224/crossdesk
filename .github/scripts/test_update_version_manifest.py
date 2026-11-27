@@ -13,7 +13,7 @@ import update_version_manifest as manifest
 
 class ManifestTest(unittest.TestCase):
     def setUp(self):
-        temporary = tempfile.TemporaryDirectory(prefix="crossdesk-manifest-")
+        temporary = tempfile.TemporaryDirectory(prefix="onedesk-manifest-")
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
         self.artifacts = self.root / "release"
@@ -21,7 +21,7 @@ class ManifestTest(unittest.TestCase):
         self.current = {
             "version": "1.6.0-20260930", "latest_version": "1.6.0-20260930",
             "releaseDate": "2026-09-30", "releaseNotes": "Desktop notes", "patch": 0,
-            "downloads": {"windows-x64": {"url": "https://downloads.crossdesk.cn/existing.exe"}},
+            "downloads": {"windows-x64": {"url": "https://downloads.onedesk.example.com/existing.exe"}},
             "custom": {"keep": True},
         }
 
@@ -36,7 +36,7 @@ class ManifestTest(unittest.TestCase):
         return manifest.merge_release(current or self.current, tag, tag, "Release notes", downloads)
 
     def test_mobile_preserves_desktop_metadata_and_downloads(self):
-        downloads = self.files("crossdesk-android-arm64-unsigned-v1.6.0-20261002.apk")
+        downloads = self.files("onedesk-android-arm64-unsigned-v1.6.0-20261002.apk")
         original = copy.deepcopy(self.current)
         result = self.merge("android-v1.6.0-20261002", downloads)
         for key, value in original.items():
@@ -44,7 +44,7 @@ class ManifestTest(unittest.TestCase):
                 self.assertEqual(result[key], value)
         self.assertEqual(result["downloads"]["windows-x64"], original["downloads"]["windows-x64"])
         self.assertEqual(result["downloads"]["android-arm64"]["url"],
-                         "https://downloads.crossdesk.cn/crossdesk-android-arm64-unsigned-v1.6.0-20261002.apk")
+                         "https://downloads.onedesk.example.com/onedesk-android-arm64-unsigned-v1.6.0-20261002.apk")
         self.assertEqual(result["downloads"]["android-arm64"]["version"], "1.6.0-20261002")
         self.assertEqual(result["downloads"]["android-arm64"]["releaseDate"], "2026-10-02")
         self.assertNotIn("platforms", result)
@@ -55,7 +55,7 @@ class ManifestTest(unittest.TestCase):
             result = copy.deepcopy(self.current)
             for platform in order:
                 version, extension = ("0.0.2", "zip") if platform == "ios" else ("1.6.0", "apk")
-                downloads = self.files(f"crossdesk-{platform}-arm64-unsigned-v{version}-20261002.{extension}")
+                downloads = self.files(f"onedesk-{platform}-arm64-unsigned-v{version}-20261002.{extension}")
                 result = self.merge(f"{platform}-v{version}-20261002", downloads, result)
             self.assertNotIn("platforms", result)
             self.assertEqual(result["version"], self.current["version"])
@@ -64,10 +64,10 @@ class ManifestTest(unittest.TestCase):
             self.assertEqual(result["downloads"]["android-arm64"]["version"], "1.6.0-20261002")
 
     def test_combined_release_records_independent_mobile_versions(self):
-        downloads = self.files("crossdesk-win-x64-v1.6.1-20261002.exe",
-                               "crossdesk-win-x64-portable-v1.6.1-20261002.zip",
-                               "crossdesk-ios-arm64-unsigned-v0.0.2-20261002.zip",
-                               "crossdesk-android-arm64-unsigned-v1.6.0-20261002.apk")
+        downloads = self.files("onedesk-win-x64-v1.6.1-20261002.exe",
+                               "onedesk-win-x64-portable-v1.6.1-20261002.zip",
+                               "onedesk-ios-arm64-unsigned-v0.0.2-20261002.zip",
+                               "onedesk-android-arm64-unsigned-v1.6.0-20261002.apk")
         result = self.merge("v1.6.1-20261002", downloads)
         self.assertEqual(result["version"], "1.6.1-20261002")
         self.assertEqual(result["downloads"]["ios-arm64"]["version"], "0.0.2-20261002")
@@ -76,8 +76,8 @@ class ManifestTest(unittest.TestCase):
 
     def test_obsolete_platforms_are_removed_on_any_release(self):
         for tag, artifact in (
-            ("android-v1.6.0-20261002", "crossdesk-android-arm64-unsigned-v1.6.0-20261002.apk"),
-            ("v1.6.1-20261002", "crossdesk-win-x64-v1.6.1-20261002.exe"),
+            ("android-v1.6.0-20261002", "onedesk-android-arm64-unsigned-v1.6.0-20261002.apk"),
+            ("v1.6.1-20261002", "onedesk-win-x64-v1.6.1-20261002.exe"),
         ):
             downloads = self.files(artifact)
             expected = self.merge(tag, downloads)
@@ -88,41 +88,41 @@ class ManifestTest(unittest.TestCase):
                 self.assertEqual(current, original)
 
     def test_mobile_tag_must_match_artifact_and_platform(self):
-        downloads = self.files("crossdesk-android-arm64-unsigned-v1.6.0-20261002.apk")
+        downloads = self.files("onedesk-android-arm64-unsigned-v1.6.0-20261002.apk")
         for tag in ("android-v1.7.0-20261002", "ios-v1.6.0-20261002"):
             with self.assertRaises(ValueError):
                 self.merge(tag, downloads)
 
     def test_signed_android_release_updates_existing_unsigned_download(self):
-        unsigned = self.files("crossdesk-android-arm64-unsigned-v1.6.0-20261002.apk")
+        unsigned = self.files("onedesk-android-arm64-unsigned-v1.6.0-20261002.apk")
         current = self.merge("android-v1.6.0-20261002", unsigned)
-        signed = self.files("crossdesk-android-arm64-v1.6.0-20261002.apk")
+        signed = self.files("onedesk-android-arm64-v1.6.0-20261002.apk")
         result = self.merge("android-v1.6.0-20261002", signed, current)
         self.assertEqual(result["downloads"]["android-arm64"]["url"],
-                         "https://downloads.crossdesk.cn/crossdesk-android-arm64-v1.6.0-20261002.apk")
+                         "https://downloads.onedesk.example.com/onedesk-android-arm64-v1.6.0-20261002.apk")
         self.assertEqual(result["version"], self.current["version"])
         self.assertEqual(result["downloads"]["windows-x64"], self.current["downloads"]["windows-x64"])
         self.assertNotIn("platforms", result)
 
     def test_signed_android_is_preferred_when_release_retains_unsigned_apk(self):
-        downloads = self.files("crossdesk-android-arm64-unsigned-v1.6.0-20261002.apk",
-                               "crossdesk-android-arm64-v1.6.0-20261002.apk")
+        downloads = self.files("onedesk-android-arm64-unsigned-v1.6.0-20261002.apk",
+                               "onedesk-android-arm64-v1.6.0-20261002.apk")
         self.assertEqual(downloads["android-arm64"]["filename"],
-                         "crossdesk-android-arm64-v1.6.0-20261002.apk")
+                         "onedesk-android-arm64-v1.6.0-20261002.apk")
         with self.assertRaises(ValueError):
-            self.files("crossdesk-android-arm64-unsigned-v1.6.0-20261001.apk",
-                       "crossdesk-android-arm64-v1.6.0-20261002.apk")
+            self.files("onedesk-android-arm64-unsigned-v1.6.0-20261001.apk",
+                       "onedesk-android-arm64-v1.6.0-20261002.apk")
 
     def test_invalid_current_manifest_is_rejected(self):
-        downloads = self.files("crossdesk-android-arm64-unsigned-v1.6.0-20261002.apk")
+        downloads = self.files("onedesk-android-arm64-unsigned-v1.6.0-20261002.apk")
         for current in ([], {}, {"downloads": []}):
             with self.assertRaises(ValueError):
                 manifest.merge_release(current, "android-v1.6.0-20261002", "Android", "", downloads)
 
     def test_missing_duplicate_and_invalid_artifacts_are_rejected(self):
-        for names in ((), ("crossdesk-android-arm64-unsigned-v1.6.0-20260230.apk",),
-                      ("crossdesk-android-arm64-unsigned-v1.6.0-20261001.apk",
-                       "crossdesk-android-arm64-unsigned-v1.6.0-20261002.apk")):
+        for names in ((), ("onedesk-android-arm64-unsigned-v1.6.0-20260230.apk",),
+                      ("onedesk-android-arm64-unsigned-v1.6.0-20261001.apk",
+                       "onedesk-android-arm64-unsigned-v1.6.0-20261002.apk")):
             with self.assertRaises(ValueError):
                 self.files(*names)
 
@@ -133,7 +133,7 @@ class ManifestTest(unittest.TestCase):
             self.assertEqual(info["releaseDate"], "2026-10-02")
 
     def test_cli_preserves_literal_notes_and_release_metadata(self):
-        self.files("crossdesk-win-x64-v1.6.1-20261002.exe")
+        self.files("onedesk-win-x64-v1.6.1-20261002.exe")
         notes = '中文 release notes\n"quoted" $(not-a-command) $HOME `literal`'
         release = {"tagName": "v1.6.1-20261002", "name": "Desktop release", "body": notes}
         (self.root / "current.json").write_text(json.dumps(self.current))
